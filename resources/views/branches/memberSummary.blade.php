@@ -527,27 +527,23 @@
                                             </p>
                                         </div>
                                         <div class="flex items-center space-x-2">
-                                            <p class="text-gray-400">Pay in Date</p>
-                                            @if ($installement->pay_in_date)
-                                                <span class="bg-green-400 p-0.5 px-2 rounded text-black text-xs">Yes</span>
-                                            @else
-                                                @if (\Carbon\Carbon::parse($installement->date_and_time)->lt(now()))
-                                                    <span
-                                                        class="bg-red-400 p-0.5 px-2 rounded text-black text-xs">No</span>
-                                                @else
-                                                    <span
-                                                        class="bg-yellow-400 p-0.5 px-2 rounded text-black text-xs flex w-8 justify-center items-center">
-                                                        <img src="{{ asset('assets/icons/Eye.svg') }}" alt="Eye"
-                                                            class="h-3 w-3 m-1">
-                                                    </span>
-                                                @endif
+                                            <p class="text-gray-400">Status</p>
+                                            @if ($installement->Status == 'PAYED')
+                                                <span
+                                                    class="bg-green-400 p-0.5 px-2 rounded text-black text-xs">PAID</span>
+                                            @elseif ($installement->Status == 'UNDERPAYED')
+                                                <span
+                                                    class="bg-yellow-400 p-0.5 px-2 rounded text-black text-xs">UNDERPAID</span>
+                                            @elseif ($installement->Status == 'NOPAYED')
+                                                <span
+                                                    class="bg-yellow-400 p-0.5 px-2 rounded text-black text-xs">NOPAID</span>
                                             @endif
                                         </div>
                                     </div>
                                     <!-- Collapsible Section -->
                                     <div class="installment-details mt-2 hidden border-t border-gray-600 pt-2">
                                         <form
-                                            action="{{ route('installments.updateInstallment', ['installmentId' => $installement->id]) }}"
+                                            action="{{ route('installments.updateInstallment', ['loanId' => $member_details->loan->firstWhere('status', 'UNCOMPLETED')->id]) }}"
                                             method="POST" enctype="multipart/form-data">
                                             @csrf
                                             @if ($errors->any())
@@ -566,7 +562,7 @@
                                                 <div class="flex justify-between items-center">
                                                     <label for="amount" class="block text-xs font-medium">Amount
                                                         *</label>
-                                                    @if ($installement->status == 'PAYED')
+                                                    @if ($installement->status != 'UNPAYED')
                                                         <span>Rs. {{ number_format($installement->amount, 2) }}</span>
                                                     @else
                                                         <input type="text" name="amount" id="amount"
@@ -578,7 +574,7 @@
                                                 <div class="flex justify-between items-center">
                                                     <label for="bill" class="block text-xs font-medium w-max">Attach
                                                         Bill</label>
-                                                    @if ($installement->status == 'PAYED')
+                                                    @if ($installement->status != 'UNPAYED')
                                                         {{-- <button>View</button> --}}
                                                     @else
                                                         <input type="file" name="bill" id="bill"
@@ -852,7 +848,7 @@
                                         @endif
 
                                         <form
-                                            action="{{ route('installments.updateInstallment', ['installmentId' => $installement->id]) }}"
+                                            action="{{ route('installments.updateInstallment', ['loanId' => $loan->id]) }}"
                                             method="POST" enctype="multipart/form-data">
                                             @csrf
                                             @if ($errors->any())

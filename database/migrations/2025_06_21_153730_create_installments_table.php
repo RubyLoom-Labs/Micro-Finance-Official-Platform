@@ -23,7 +23,7 @@ class CreateInstallmentsTable extends Migration
             $table->string('amount')->nullable(false);
             $table->string('installment_amount')->nullable(false);
             $table->integer('loan_id')->nullable(false);
-            $table->enum('status', ['PAYED', 'UNPAYED'])->default('UNPAYED');
+            $table->enum('status', ['PAYED', 'UNPAYED','NOPAYED','UNDERPAYED'])->default('UNPAYED');
             $table->timestamps();
         });
     }

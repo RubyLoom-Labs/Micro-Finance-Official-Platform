@@ -6,6 +6,7 @@ use App\Repositories\InstallmentRepository;
 use App\Repositories\LoanRepository;
 use App\Repositories\MemberRepository;
 use App\Repositories\UnderpaymentRepository;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -22,7 +23,7 @@ class InstallmentController extends Controller
         $this->underpaymentRepository = $underpaymentRepository;
         $this->loanRepository = $loanRepository;
     }
-    public function updateInstallment($installmentId, Request $request)
+    public function updateInstallment($loanId, Request $request)
     {
         $request->validate([
             'amount' => 'required|numeric|gt:0',
@@ -31,47 +32,134 @@ class InstallmentController extends Controller
 
         try {
 
-            $relatedInstallment = $this->installmentRepository->search_one('id', $installmentId);
-            if (!$relatedInstallment) {
+            $relatedLoan = $this->loanRepository->search_one(['status' => 'UNCOMPLETED', 'id' => $loanId]);
+            $relatedInstallment = $this->installmentRepository->search_many('loan_id', $loanId);
+            $maxInstallment = $relatedInstallment->sortByDesc('installment_number')->first();
+            if (!$maxInstallment) {
                 Log::error('Not found installment');
-                return redirect()->back()->with('error', 'Not found installment');
+                return redirect()->back()->with('error', 'Not found first installment');
             }
-            $totalCount = $relatedInstallment->amount + $request->amount;
-            if ($totalCount > $relatedInstallment->installment_amount) {
-                return redirect()->back()
-                    ->withInput()
-                    ->withErrors(['amount' => 'The entered amount exceeds the remaining installment amount.']);
-            } elseif ($totalCount == $relatedInstallment->installment_amount) {
-                $this->installmentRepository->update($installmentId, 'status', 'PAYED');
-                $now = now();
-                $installmentDateTime = $relatedInstallment->date_and_time;
-                if ($now->gt($installmentDateTime)) {
-                    $this->installmentRepository->update($installmentId, 'pay_in_date', false);
+            $installmentDate = Carbon::parse($maxInstallment->date_and_time);
+            $total_price_until_now = $maxInstallment->installment_amount * $maxInstallment->installment_number;
+            $total_price_paid_until_now = $relatedInstallment->sum('amount');
+            if (Carbon::now() <= $installmentDate->copy()->addDays(7)) {
+                $totalCount = $maxInstallment->amount + $request->amount;
+                if (($total_price_paid_until_now + $request->amount) >= $relatedLoan->loan_amount) {
+                    $this->installmentRepository->update($maxInstallment->id, 'status', 'PAYED');
+                    $this->loanRepository->update($relatedLoan->id, 'status', 'COMPLETED');
+                    $this->memberRepository->update($relatedLoan->member_id, 'status', 'INACTIVE');
+                }
+                $this->installmentRepository->update($maxInstallment->id, 'amount', $totalCount);
+                $this->underpaymentRepository->create(['amount' => $request->amount, 'installment_id' => $maxInstallment->id, 'payed_date' => Carbon::now()]);
+            } else if (Carbon::now() > $installmentDate->copy()->addDays(7)) {
+                $endDate = $installmentDate->copy()->addDays(7);
+                $diffInDays = Carbon::now()->diffInDays($endDate);
+                $weeksCount = intdiv($diffInDays, 7);
+                if ($weeksCount > 0) {
+                    if (($total_price_until_now - $total_price_paid_until_now) >= $maxInstallment->installment_amount) {
+                        $this->installmentRepository->update($maxInstallment->id, 'status', 'NOPAYED');
+                    } else if (
+                        0 < ($total_price_until_now - $total_price_paid_until_now)
+                        && ($total_price_until_now - $total_price_paid_until_now) < $maxInstallment->installment_amount
+                    ) {
+                        $this->installmentRepository->update($maxInstallment->id, 'status', 'UNDERPAYED');
+                    } else {
+                        $this->installmentRepository->update($maxInstallment->id, 'status', 'PAYED');
+                    }
+                    for ($i = 1; $i <= $weeksCount; $i++) {
+
+                        $total_price_until_now = $maxInstallment->installment_amount * ($maxInstallment->installment_number + $i);
+                        if (($total_price_until_now - $total_price_paid_until_now) >= $maxInstallment->installment_amount) {
+                            $this->installmentRepository->create([
+                                'installment_number' => $maxInstallment->installment_number + $i,
+                                'date_and_time' => Carbon::parse($maxInstallment->date_and_time)->copy()->addDays(7 * $i),
+                                'amount' => 0,
+                                'installment_amount' => $maxInstallment->installment_amount,
+                                'loan_id' => $loanId,
+                                'status' => 'NOPAYED'
+                            ]);
+                        } else if (
+                            0 < ($total_price_until_now - $total_price_paid_until_now)
+                            && ($total_price_until_now - $total_price_paid_until_now) < $maxInstallment->installment_amount
+                        ) {
+                            $this->installmentRepository->create([
+                                'installment_number' => $maxInstallment->installment_number + $i,
+                                'date_and_time' => Carbon::parse($maxInstallment->date_and_time)->copy()->addDays(7 * $i),
+                                'amount' => 0,
+                                'installment_amount' => $maxInstallment->installment_amount,
+                                'loan_id' => $loanId,
+                                'status' => 'UNDERPAYED'
+                            ]);
+                        } else {
+                            $this->installmentRepository->create([
+                                'installment_number' => $maxInstallment->installment_number + $i,
+                                'date_and_time' => Carbon::parse($maxInstallment->date_and_time)->copy()->addDays(7 * $i),
+                                'amount' => 0,
+                                'installment_amount' => $maxInstallment->installment_amount,
+                                'loan_id' => $loanId,
+                                'status' => 'PAYED'
+                            ]);
+                        }
+                    }
+                    $total_price_until_now = $maxInstallment->installment_amount * ($maxInstallment->installment_number + $weeksCount);
+                    if (($total_price_paid_until_now + $request->amount) >= $relatedLoan->loan_amount) {
+                        $this->installmentRepository->create([
+                            'installment_number' => $maxInstallment->installment_number + $weeksCount + 1,
+                            'date_and_time' => Carbon::parse($maxInstallment->date_and_time)->copy()->addDays(7 * ($weeksCount + 1)),
+                            'amount' => $request->amount,
+                            'installment_amount' => $maxInstallment->installment_amount,
+                            'loan_id' => $loanId,
+                            'status' => 'UNPAYED'
+                        ]);
+                        $this->loanRepository->update($relatedLoan->id, 'status', 'COMPLETED');
+                        $this->memberRepository->update($relatedLoan->member_id, 'status', 'INACTIVE');
+                    } else {
+                        $this->installmentRepository->create([
+                            'installment_number' => $maxInstallment->installment_number + $weeksCount + 1,
+                            'date_and_time' => Carbon::parse($maxInstallment->date_and_time)->copy()->addDays(7 * ($weeksCount + 1)),
+                            'amount' => $request->amount,
+                            'installment_amount' => $maxInstallment->installment_amount,
+                            'loan_id' => $loanId,
+                            'status' => 'UNPAYED'
+                        ]);
+                    }
+                    $this->underpaymentRepository->create(['amount' => $request->amount, 'installment_id' => $maxInstallment->installment_number + $weeksCount + 1, 'payed_date' => Carbon::now()]);
                 } else {
-                    $this->installmentRepository->update($installmentId, 'pay_in_date', true);
-                }
-                $this->installmentRepository->update($installmentId, 'payed_date', $now);
-                if ($request->amount < $relatedInstallment->installment_amount) {
-                    $this->underpaymentRepository->create(['amount' => $request->amount, 'installment_id' => $installmentId, 'payed_date' => $now]);
-                }
-                if ($relatedInstallment->loan->terms == $relatedInstallment->installment_number) {
-                    $this->memberRepository->update($relatedInstallment->loan->member->id, 'status', 'INACTIVE');
-                    $this->loanRepository->update($relatedInstallment->loan->id, 'status', 'COMPLETED');
-                }
-            } else {
-                $now = now();
-                if ($request->file('image_1')) {
-                    $image1Path = $request->file('image_1')->store("members/images/underpaymentDocument/{$installmentId}/{$now}", 'public');
-                    $this->underpaymentRepository->create(['amount' => $request->amount, 'installment_id' => $installmentId, 'payed_date' => $now, 'bill_image' => $image1Path]);
-                } else {
-                    $this->underpaymentRepository->create(['amount' => $request->amount, 'installment_id' => $installmentId, 'payed_date' => $now]);
+                    if (($total_price_paid_until_now + $request->amount) >= $relatedLoan->loan_amount) {
+                        $this->installmentRepository->create([
+                            'installment_number' => $maxInstallment->installment_number + 1,
+                            'date_and_time' => Carbon::parse($maxInstallment->date_and_time)->copy()->addDays(7),
+                            'amount' => $request->amount,
+                            'installment_amount' => $maxInstallment->installment_amount,
+                            'loan_id' => $loanId,
+                            'status' => 'PAYED'
+                        ]);
+                        $this->loanRepository->update($relatedLoan->id, 'status', 'COMPLETED');
+                        $this->memberRepository->update($relatedLoan->member_id, 'status', 'INACTIVE');
+                    } else {
+                        $this->installmentRepository->create([
+                            'installment_number' => $maxInstallment->installment_number + 1,
+                            'date_and_time' => Carbon::parse($maxInstallment->date_and_time)->copy()->addDays(7),
+                            'amount' => $request->amount,
+                            'installment_amount' => $maxInstallment->installment_amount,
+                            'loan_id' => $loanId,
+                            'status' => 'UNPAYED'
+                        ]);
+                    }
+
+                    $this->underpaymentRepository->create(['amount' => $request->amount, 'installment_id' => $maxInstallment->installment_number + 1, 'payed_date' => Carbon::now()]);
+                    if (($total_price_until_now - $total_price_paid_until_now) >= $maxInstallment->installment_amount) {
+                        $this->installmentRepository->update($maxInstallment->id, 'status', 'NOPAYED');
+                    } else if (
+                        0 < ($total_price_until_now - $total_price_paid_until_now)
+                        && ($total_price_until_now - $total_price_paid_until_now) < $maxInstallment->installment_amount
+                    ) {
+                        $this->installmentRepository->update($maxInstallment->id, 'status', 'UNDERPAYED');
+                    } else {
+                        $this->installmentRepository->update($maxInstallment->id, 'status', 'PAYED');
+                    }
                 }
             }
-            if ($request->file('image_1')) {
-                $image1Path = $request->file('image_1')->store("members/images/installmentDocument/{$installmentId}", 'public');
-                $this->installmentRepository->update($installmentId, 'bill_image', $image1Path);
-            }
-            $this->installmentRepository->update($installmentId, 'amount',  $totalCount);
             return  redirect()->back()->with('success', 'Installment updated successfully.');
         } catch (\Exception $e) {
             Log::error('Error updating installment: ' . $e->getMessage());

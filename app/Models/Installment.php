@@ -21,7 +21,6 @@ class Installment extends Model
         'bill_image',
         'installment_number',
         'payed_date',
-        'pay_in_date',
         'date_and_time',
         'status',
         'loan_id'

@@ -73,7 +73,7 @@ Route::post('user/login', [UserController::class, 'login']);
     Route::post('/loans/create/{memberId}', [LoanController::class, 'createLoan'])->name('loans.createLoan');
 
     //installments routes
-    Route::post('/installments/update/{installmentId}', [InstallmentController::class, 'updateInstallment'])->name('installments.updateInstallment');
+    Route::post('/installments/update/{loanId}', [InstallmentController::class, 'updateInstallment'])->name('installments.updateInstallment');
 
     /*income*/
     Route::get('/income', [CenterController::class, 'incomeView'])->name('centers.viewIncomeBlade');

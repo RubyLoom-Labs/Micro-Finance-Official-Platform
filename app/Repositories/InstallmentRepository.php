@@ -44,7 +44,7 @@ class InstallmentRepository
     public function search_many($type, $value)
     {
         try {
-            return $this->installments->where([$type => $value, 'status' => 'ACTIVE'])->get();
+            return $this->installments->where([$type => $value])->get();
         } catch (\Exception $e) {
             return $e;
         }

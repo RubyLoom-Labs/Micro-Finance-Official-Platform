@@ -87,14 +87,12 @@ class LoanController extends Controller
 
             ]);
             if ($isCreateLoan) {
-
                 $loanId =  $this->loanRepository->search_one(['status' => 'UNCOMPLETED', 'member_id' => $memberId])->id;
                 $startDate = Carbon::parse($request->issue_date);
                 $now = Carbon::now();
-                for ($i = $request->terms; $i >= 1; $i--) {
-                    $installmentDate = $startDate->copy()->addDays(7 * ($i))->setTime($now->hour, $now->minute, $now->second);
+                    $installmentDate = $startDate->copy()->addDays(7)->setTime($now->hour, $now->minute, $now->second);
                     $this->installmentRepository->create([
-                        'installment_number' => $i,
+                        'installment_number' => 1,
                         'date_and_time' => $installmentDate->toDateTimeString(),
                         'amount' => 0,
                         'installment_amount' => $request->installment_amount,
@@ -104,7 +102,7 @@ class LoanController extends Controller
                 }
                 $this->memberRepository->update($memberId, 'status', 'ACTIVE');
                 $this->memberRepository->update($memberId, 'image_2', $image1Path);
-            }
+
             return redirect()->back()->with('success', 'Member created successfully.');
         } catch (\Exception $e) {
 
