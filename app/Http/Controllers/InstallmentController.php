@@ -31,7 +31,6 @@ class InstallmentController extends Controller
         ]);
 
         try {
-
             $relatedLoan = $this->loanRepository->search_one(['status' => 'UNCOMPLETED', 'id' => $loanId]);
             $relatedInstallment = $this->installmentRepository->search_many('loan_id', $loanId);
             $maxInstallment = $relatedInstallment->sortByDesc('installment_number')->first();
@@ -163,8 +162,13 @@ class InstallmentController extends Controller
                     }
                 }
             }
-            return  redirect()->back()->with('success', 'Installment updated successfully.');
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Installment updated successfully.'
+            ]);
         } catch (\Exception $e) {
+
             Log::error('Error updating installment: ' . $e->getMessage());
             return redirect()->back()
                 /* ->with('show_create_popup', true) */

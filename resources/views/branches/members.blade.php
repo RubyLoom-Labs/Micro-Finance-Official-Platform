@@ -8,6 +8,8 @@
     <div id="mainContent" class="flex lg:h-full">
         <!-- First Column -->
         <!--Mobile Cards and table View-->
+        <meta name="csrf-token" content="{{ csrf_token() }}">
+
         <div id="firstColumn" class="w-full h-full p-2 lg:border-r lg:p-4 transition-all duration-300  lg:relative ">
 
             <!-- Add New Member Modal -->
@@ -173,22 +175,17 @@
                             <div class="flex items-center space-x-4">
                                 <label for="Amount" class="block text-xs text-gray-400 mb-0 ml-2 w-36">
                                     Amount*</label>
-                                <input type="text" name="memberFullName" id="Amount" placeholder="10 000"
-                                    value=""
-                                    class="w-full p-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                                <input type="number" name="amount" id="Amount" value=""
+                                    class="no-spinner w-full p-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
                                     required />
                             </div>
-
-                            <p class="p-0 text-gray-400 px-4 text-right py-0" style="font-size: 6px;">Needed Amount :
-                                10000</p>
-
-                            <div class="flex items-center space-x-4">
+                            {{-- <div class="flex items-center space-x-4">
                                 <label for="newMemberAddress"
                                     class="block text-xs text-gray-400 mb-0 ml-2 w-36">Date</label>
                                 <input type="date" name="date" id="date" placeholder="" value=""
                                     class="w-full p-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm" />
                             </div>
-
+ --}}
                             <div class="flex justify-end space-x-4 mt-2 pt-4">
                                 <button type="button" id="cancelNewPayment"
                                     class="px-6 py-1 bg-gray-300 rounded-lg hover:bg-gray-400 focus:outline-none text-sm">
@@ -424,9 +421,9 @@
                                 <thead class="w-full text-gray-700 text-xs font-light bg-gray-100 sticky top-0">
                                     <tr class="uppercase w-full">
                                         <!--<th class="pl-2 text-left">
-                                                                                                                                                                                                                                                        <input type="checkbox" id="select-all"
-                                                                                                                                                                                                                                                            class="form-checkbox h-4 w-4 text-blue-400 m-1">
-                                                                                                                                                                 </th>-->
+                                                                                                                                                                                                                                                                                                                    <input type="checkbox" id="select-all"
+                                                                                                                                                                                                                                                                                                                        class="form-checkbox h-4 w-4 text-blue-400 m-1">
+                                                                                                                                                                                                                             </th>-->
                                         <th class="py-2 text-center">#</th>
                                         <th class="py-2 text-left">Name</th>
                                         <th class="py-2 text-left">Center</th>
@@ -447,9 +444,9 @@
                                                 data-member_id='{{ $member->nic_number }}' data-loan-balance="20000"
                                                 data-member='@json($member)'>
                                                 <!--<td class="pl-2 text-left">
-                                                                                                                                                                                                                                                            <input type="checkbox" name="selected_ids[]" value="1"
-                                                                                                                                                                                                                                                                class="form-checkbox h-4 w-4 text-blue-600 m-1">
-                                                                                                                                                                                                                                                        </td>-->
+                                                                                                                                                                                                                                                                                                                        <input type="checkbox" name="selected_ids[]" value="1"
+                                                                                                                                                                                                                                                                                                                            class="form-checkbox h-4 w-4 text-blue-600 m-1">
+                                                                                                                                                                                                                                                                                                                    </td>-->
                                                 <td class="py-2 text-center">
                                                     {{ str_pad($member->id, 3, '0', STR_PAD_LEFT) }}
                                                 </td>
@@ -507,9 +504,9 @@
                                                 data-member_id='{{ $member->nic_number }}' data-loan-balance="20000"
                                                 data-member='@json($member)'>
                                                 <!--<td class="pl-2 text-left">
-                                                                                                                                                                                                                                                            <input type="checkbox" name="selected_ids[]" value="1"
-                                                                                                                                                                                                                                                                class="form-checkbox h-4 w-4 text-blue-600 m-1">
-                                                                                                                                                                                                                                                        </td>-->
+                                                                                                                                                                                                                                                                                                                        <input type="checkbox" name="selected_ids[]" value="1"
+                                                                                                                                                                                                                                                                                                                            class="form-checkbox h-4 w-4 text-blue-600 m-1">
+                                                                                                                                                                                                                                                                                                                    </td>-->
                                                 <td class="py-2 text-center">
                                                     {{ str_pad($member->id, 3, '0', STR_PAD_LEFT) }}
                                                 </td>
@@ -543,11 +540,7 @@
                                                         <img src="{{ asset('assets/icons/PencilSimple.svg') }}"
                                                             alt="Pencil" class="h-3 w-3 m-1">
                                                     </a>
-                                                    <a href="#"
-                                                        class="border rounded hover:bg-lime-500 addNewPaymentModalButton">
-                                                        <img src="{{ asset('assets/icons/Plus.svg') }}" alt="Pencil"
-                                                            class="h-3 w-3 m-1">
-                                                    </a>
+
                                                 </td>
                                             </tr>
                                         @endif
@@ -949,13 +942,9 @@
         }
         let select_member_id = '';
         // Row Summey
+        let selected_loan_id = null;
         document.querySelectorAll('.view-details').forEach(button => {
             button.addEventListener('click', (e) => {
-                // Check if the clicked element is the payment button
-                if (e.target.closest('.addNewPaymentModalButton')) {
-                    return; // Do nothing, let the payment button's event listener handle it
-                }
-
                 const row = button.closest('tr');
                 const RowDetails = document.getElementById('RowDetails');
                 const firstColumn = document.getElementById('firstColumn');
@@ -967,14 +956,29 @@
                 RowDetails.classList.add('lg:flex');
 
                 // Update second column content
-                const memberData = JSON.parse(row.getAttribute('data-member'));
                 const member_fullname = row.getAttribute('data-member-fullname');
                 const branch_name = row.getAttribute('data-branchname');
                 const center_name = row.getAttribute('data-center-name');
                 const group_name = row.getAttribute('data-group-name');
                 const member_id = row.getAttribute('data-member-id');
+                const memberData = JSON.parse(row.getAttribute('data-member'));
+                const uncompletedLoan = memberData.loan.find(loan => loan.status === 'UNCOMPLETED');
+
+                // Check if the clicked element is the payment button
+                if (e.target.closest('.addNewPaymentModalButton')) {
+                    console.log("test");
+                    selected_loan_id = uncompletedLoan.id;
+                    e.preventDefault();
+                    e.stopPropagation(); // Prevent event from bubbling up to the parent row
+                    const paymentModal = document.getElementById('addNewPaymentModal');
+                    paymentModal.classList.remove('hidden');
+                    paymentModal.classList.add('flex');
+
+                    return; // Do nothing, let the payment button's event listener handle it
+                }
+
+
                 select_member_id = memberData.id;
-                console.log(memberData);
                 document.getElementById('memberNameShow').textContent = member_fullname;
                 document.getElementById('memberIdShow').textContent = member_id;
                 document.getElementById('branchNameShow').textContent = branch_name;
@@ -996,7 +1000,6 @@
                     document.getElementById('inactiveMemberStatus').classList.add('hidden');
                     addLoanButtonDiv.classList.add('hidden');
                 }
-                const uncompletedLoan = memberData.loan.find(loan => loan.status === 'UNCOMPLETED');
                 console.log(uncompletedLoan);
                 document.getElementById('LoanAmountSlideBar').textContent =
                     uncompletedLoan ? 'Rs. ' + parseFloat(uncompletedLoan.loan_amount).toFixed(2) :
@@ -1046,24 +1049,19 @@
                         let statusLabel = '';
 
                         if (installment.status === 'PAYED') {
-                            if (installment.pay_in_date == 1) {
-                                statusLabel =
-                                    `<p class="text-xs font-medium p-0.5 bg-green-500 rounded px-1">Yes</p>`;
-                            } else {
-                                statusLabel =
-                                    `<p class="text-xs font-medium p-0.5 bg-red-500 rounded px-1">No</p>`;
-                            }
-
+                            statusLabel =
+                                `<p class="text-xs font-medium p-0.5 bg-green-400 rounded text-white px-1">PAID</p>`;
+                        } else if (installment.status === 'NOPAYED') {
+                            statusLabel =
+                                `<p class="text-xs font-medium p-0.5 bg-red-400 rounded text-white px-1">No PAID</p>`;
+                        } else if (installment.status === 'UNDERPAYED') {
+                            statusLabel =
+                                `<p class="text-xs font-medium p-0.5 bg-yellow-400 rounded text-white px-1">UNDER PAID</p>`;
                         } else {
-
-                            if (payedDate > now) {
-                                statusLabel =
-                                    `<p class="text-xs font-medium p-0.5 bg-yellow-500 rounded px-1">Pending</p>`;
-                            } else {
-                                statusLabel =
-                                    `<p class="text-xs font-medium p-0.5 bg-red-500 rounded px-1">No</p>`;
-                            }
+                            statusLabel =
+                                `<p class="text-xs font-medium p-0.5 bg-blue-400 rounded text-white px-1">ONGOING</p>`;
                         }
+
 
                         let amountInputHTML = '';
                         if (installment.status === 'UNPAYED') {
@@ -1126,7 +1124,7 @@
                     <p class="font-medium text-gray-600"> Rs. ${parseFloat(installment.amount).toFixed(2)}(${parseFloat(installment.installment_amount).toFixed(2)})</p>
                 </div>
                 <div class="flex items-center space-x-2">
-                    <p class="text-gray-400">Pay in Date</p>
+                    <p class="text-gray-400">Status</p>
                     ${statusLabel}
                 </div>
             </div>
@@ -1191,6 +1189,57 @@
                     modal.classList.add('flex');
                 });
             }
+            document.getElementById('cancelNewPayment').addEventListener('click', function() {
+                console.log("tets");
+                const paymentModal = document.getElementById('addNewPaymentModal');
+                paymentModal.classList.add('hidden');
+                paymentModal.classList.remove('flex');
+                document.getElementById('addNewPaymentForm').reset();
+            });
+            document.getElementById('addNewPaymentForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+
+                if (!selected_loan_id) {
+                    alert("Loan ID not found!");
+                    return;
+                }
+                console.log(selected_loan_id);
+                const form = e.target;
+                const formData = new FormData(form);
+                console.log(formData);
+                try {
+                    const response = await fetch(`/installments/update/${selected_loan_id}`, {
+                        method: "POST",
+                        headers: {
+                            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]')
+                                .content
+                        },
+                        body: formData
+                    });
+                    console.log("test");
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.success) {
+
+                            alert(data.message);
+                            window.location.reload();
+                            // Close modal & reset form
+                            form.reset();
+                            const paymentModal = document.getElementById('addNewPaymentModal');
+                            paymentModal.classList.add('hidden');
+                            paymentModal.classList.remove('flex');
+
+                            // Optionally, update the table row dynamically
+                        }
+                    } else {
+                        console.error("Error:", await response.text());
+                    }
+                } catch (err) {
+                    alert(err);
+                    console.error("Request failed:", err);
+                }
+            });
+
 
             // Close modal on Cancel button click
             const cancelNewMemberButton = document.getElementById('cancelNewMember');
@@ -1308,27 +1357,9 @@
             document.getElementById('addLoanModal').classList.remove('flex');
         });
         // Payment Modal Functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            const paymentModal = document.getElementById('addNewPaymentModal');
 
-            // Open payment modal when button with class addNewPaymentModalButton is clicked
-            const paymentButtons = document.querySelectorAll('.addNewPaymentModalButton');
-            paymentButtons.forEach(function(button) {
-                button.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation(); // Prevent event from bubbling up to the parent row
-                    paymentModal.classList.remove('hidden');
-                    paymentModal.classList.add('flex');
-                });
-            });
 
-            // Close payment modal when cancel button is clicked
-            document.getElementById('cancelNewPayment').addEventListener('click', function() {
-                paymentModal.classList.add('hidden');
-                paymentModal.classList.remove('flex');
-                document.getElementById('addNewPaymentForm').reset();
-            });
-        });
+        // Close payment modal when cancel button is clicked
     </script>
 
     <style>
