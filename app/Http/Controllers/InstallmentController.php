@@ -47,6 +47,7 @@ class InstallmentController extends Controller
                 if (($total_price_paid_until_now + $request->amount) >= $relatedLoan->loan_amount) {
                     $this->installmentRepository->update($maxInstallment->id, 'status', 'PAYED');
                     $this->loanRepository->update($relatedLoan->id, 'status', 'COMPLETED');
+                    $this->loanRepository->update($relatedLoan->id, 'completed_date', Carbon::now()->toDateString());
                     $this->memberRepository->update($relatedLoan->member_id, 'status', 'INACTIVE');
                 }
                 $this->installmentRepository->update($maxInstallment->id, 'amount', $totalCount);
@@ -112,6 +113,7 @@ class InstallmentController extends Controller
                             'status' => 'UNPAYED'
                         ]);
                         $this->loanRepository->update($relatedLoan->id, 'status', 'COMPLETED');
+                        $this->loanRepository->update($relatedLoan->id, 'completed_date', Carbon::now()->toDateString());
                         $this->memberRepository->update($relatedLoan->member_id, 'status', 'INACTIVE');
                     } else {
                         $this->installmentRepository->create([
@@ -135,6 +137,7 @@ class InstallmentController extends Controller
                             'status' => 'PAYED'
                         ]);
                         $this->loanRepository->update($relatedLoan->id, 'status', 'COMPLETED');
+                        $this->loanRepository->update($relatedLoan->id, 'completed_date', Carbon::now()->toDateString());
                         $this->memberRepository->update($relatedLoan->member_id, 'status', 'INACTIVE');
                     } else {
                         $this->installmentRepository->create([

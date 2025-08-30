@@ -464,31 +464,13 @@
                             <div class="border bg-white rounded-lg  p-2 px-2 w-1/3 text-center ">Complete - <span>
                                     {{ str_pad(collect(optional($member_details->loan->firstWhere('status', 'UNCOMPLETED'))->installment)->where('status', 'PAYED')->count(),2,'0',STR_PAD_LEFT) }}
                                 </span></div>
-                            @php
-                                use Illuminate\Support\Carbon;
 
-                                $pendingCount = collect(
-                                    optional($member_details->loan->firstWhere('status', 'UNCOMPLETED'))->installment,
-                                )
-                                    ->where('status', 'UNPAYED')
-                                    ->filter(function ($item) {
-                                        return \Carbon\Carbon::parse($item->date_and_time)->lt(now());
-                                    })
-                                    ->count();
-
-                                $waitingCount = collect(
-                                    optional($member_details->loan->firstWhere('status', 'UNCOMPLETED'))->installment,
-                                )
-                                    ->where('status', 'UNPAYED')
-                                    ->filter(function ($item) {
-                                        return \Carbon\Carbon::parse($item->date_and_time)->gte(now());
-                                    })
-                                    ->count();
-                            @endphp
-                            <div class="border bg-white rounded-lg  p-2 px-2 w-1/3 text-center">Pending - <span>
-                                    {{ str_pad($pendingCount, 2, '0', STR_PAD_LEFT) }} </span></div>
-                            <div class="border bg-white rounded-lg  p-2 px-2 w-1/3 text-center">Waiting - <span>
-                                    {{ str_pad($waitingCount, 2, '0', STR_PAD_LEFT) }} </span></div>
+                            <div class="border bg-white rounded-lg  p-2 px-2 w-1/3 text-center">Under Paid - <span>
+                                    {{ str_pad(collect(optional($member_details->loan->firstWhere('status', 'UNCOMPLETED'))->installment)->where('status', 'UNDERPAYED')->count(),2,'0',STR_PAD_LEFT) }}
+                                </span></div>
+                            <div class="border bg-white rounded-lg  p-2 px-2 w-1/3 text-center">No Paid - <span>
+                                    {{ str_pad(collect(optional($member_details->loan->firstWhere('status', 'UNCOMPLETED'))->installment)->where('status', 'NOPAYED')->count(),2,'0',STR_PAD_LEFT) }}
+                                </span></div>
                         </div>
                     </div>
                     <p class="text-center text-xs my-2 text-gray-400 lg:hidden">Loan
@@ -528,15 +510,18 @@
                                         </div>
                                         <div class="flex items-center space-x-2">
                                             <p class="text-gray-400">Status</p>
-                                            @if ($installement->Status == 'PAYED')
+                                            @if ($installement->status == 'PAYED')
                                                 <span
-                                                    class="bg-green-400 p-0.5 px-2 rounded text-black text-xs">PAID</span>
-                                            @elseif ($installement->Status == 'UNDERPAYED')
+                                                    class="bg-green-400 p-0.5 px-2 rounded text-white text-xs">PAID</span>
+                                            @elseif ($installement->status == 'UNDERPAYED')
+                                                <span class="bg-yellow-400 p-0.5 px-2 rounded text-white text-xs">UNDER
+                                                    PAID</span>
+                                            @elseif ($installement->status == 'NOPAYED')
+                                                <span class="bg-red-400 p-0.5 px-2 rounded text-white text-xs">NO
+                                                    PAID</span>
+                                            @else
                                                 <span
-                                                    class="bg-yellow-400 p-0.5 px-2 rounded text-black text-xs">UNDERPAID</span>
-                                            @elseif ($installement->Status == 'NOPAYED')
-                                                <span
-                                                    class="bg-yellow-400 p-0.5 px-2 rounded text-black text-xs">NOPAID</span>
+                                                    class="bg-blue-400 p-0.5 px-2 rounded text-white text-xs">ONGOING</span>
                                             @endif
                                         </div>
                                     </div>
@@ -606,7 +591,7 @@
                                     <th class="py-2 pl-4 text-left">Installment</th>
                                     <th class="py-2 text-left">Amount</th>
                                     <th class="py-2 text-left">Date & time</th>
-                                    <th class="py-2 text-left">Pay in day</th>
+                                    <th class="py-2 text-left">Status</th>
                                     <th class="py-2 text-center">Action</th>
                                 </tr>
                             </thead>
@@ -622,20 +607,18 @@
                                             <td class="py-2 text-left">Rs. {{ $installement->amount }}</td>
                                             <td class="py-2 text-left">{{ $installement->date_and_time }}</td>
                                             <td class="py-2 text-left">
-                                                @if ($installement->pay_in_date)
+                                                @if ($installement->status == 'PAYED')
                                                     <span
-                                                        class="bg-green-400 p-0.5 px-2 rounded text-black text-xs">Yes</span>
+                                                        class="bg-green-400 p-0.5 px-2 rounded text-white text-xs">PAID</span>
+                                                @elseif ($installement->status == 'UNDERPAYED')
+                                                    <span class="bg-yellow-400 p-0.5 px-2 rounded text-white text-xs">UNDER
+                                                        PAID</span>
+                                                @elseif ($installement->status == 'NOPAYED')
+                                                    <span class="bg-red-400 p-0.5 px-2 rounded text-white text-xs">NO
+                                                        PAID</span>
                                                 @else
-                                                    @if (\Carbon\Carbon::parse($installement->date_and_time)->lt(now()))
-                                                        <span
-                                                            class="bg-red-400 p-0.5 px-2 rounded text-black text-xs">No</span>
-                                                    @else
-                                                        <span
-                                                            class="bg-yellow-400 p-0.5 px-2 rounded text-black text-xs flex w-8 justify-center items-center">
-                                                            <img src="{{ asset('assets/icons/Eye.svg') }}" alt="Eye"
-                                                                class="h-3 w-3 m-1">
-                                                        </span>
-                                                    @endif
+                                                    <span
+                                                        class="bg-blue-400 p-0.5 px-2 rounded text-white text-xs">ONGOING</span>
                                                 @endif
                                             </td>
                                             <td class="py-2 text-center flex justify-center items-center gap-1">
@@ -730,6 +713,21 @@
                                             <p class="font-medium text-gray-600">{{ $loan->completed_date }}</p>
                                         </div>
                                     </div>
+                                    <div class="mt-0 flex justify-between items-center text-xs">
+                                        <div class="flex items-center space-x-2">
+                                            <p class="text-[#ff0000]" style="color: rgb(227, 64, 64)">Under Payment</p>
+                                            <p class="font-medium "style="color: red;">
+                                                {{ str_pad(collect(optional($loan->installment)->where('status', 'UNDERPAYED'))->count(), 2, '0', STR_PAD_LEFT) }}
+
+                                            </p>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            <p class="text-gray-400" style="color: rgb(227, 64, 64)">No Paid</p>
+                                            <p class="font-medium"style="color: red;">
+                                                {{ str_pad(collect(optional($loan->installment)->where('status', 'NOPAYED'))->count(), 2, '0', STR_PAD_LEFT) }}
+                                            </p>
+                                        </div>
+                                    </div>
                                 </div>
                             @endif
                         @endforeach
@@ -786,9 +784,18 @@
                                         <div class="flex items-center space-x-2">
                                             <p class="text-sm text-gray-600">Installment #
                                                 <span>{{ $installement->installment_number }}</span>
-                                                @if ($installement->status === 'PAYED')
-                                                    <p class="text-xs font-medium p-0.5 bg-green-400 rounded px-1">
-                                                        Completed</p>
+                                                @if ($installement->status == 'PAYED')
+                                                    <span
+                                                        class="bg-green-400 p-0.5 px-2 rounded text-white text-xs">PAID</span>
+                                                @elseif ($installement->status == 'UNDERPAYED')
+                                                    <span class="bg-yellow-400 p-0.5 px-2 rounded text-white text-xs">UNDER
+                                                        PAID</span>
+                                                @elseif ($installement->status == 'NOPAYED')
+                                                    <span class="bg-red-400 p-0.5 px-2 rounded text-white text-xs">NO
+                                                        PAID</span>
+                                                @else
+                                                    <span
+                                                        class="bg-blue-400 p-0.5 px-2 rounded text-white text-xs">ONGOING</span>
                                                 @endif
                                             </p>
                                             <button class="toggle-details-btn p-1 rounded hover:bg-sky-200">
@@ -798,14 +805,15 @@
                                         </div>
                                         <p class="text-xs text-gray-600">{{ $installement->payed_date }}</p>
                                     </div>
-                                    <div class="mt-0 flex justify-between items-center text-xs">
+                                    <div class="mt-2 flex justify-between items-center text-xs">
                                         <div class="flex items-center space-x-2">
                                             <p class="text-gray-400">Payed Amount</p>
                                             <p class="font-medium text-gray-600">Rs.
-                                                {{ number_format($installement->amount, 2) }}({{ number_format($installement->installment_amount, 2) }})
+                                                {{ number_format($installement->amount, 2) }}
+                                                ({{ number_format($installement->installment_amount, 2) }})
                                             </p>
                                         </div>
-                                        <div class="flex items-center space-x-2">
+                                        {{-- <div class="flex items-center space-x-2">
                                             <p class="text-gray-400">Pay in Date</p>
                                             @if ($installement->pay_in_date)
                                                 <p class="text-xs font-medium p-0.5 bg-green-500 rounded px-1">Yes</p>
@@ -817,7 +825,7 @@
                                                     </p>
                                                 @endif
                                             @endif
-                                        </div>
+                                        </div> --}}
                                     </div>
 
                                     <div class="installment-details mt-2 hidden  pt-2">
@@ -839,79 +847,73 @@
                                                         <p class="font-medium text-gray-400">
                                                             {{ $underpayment->payed_date }}</p>
                                                     </div>
-                                                    <div class="flex items-center space-x-2">
+                                                    {{--  <div class="flex items-center space-x-2">
                                                         <p class="font-medium w-16"> Bill *</p>
                                                         <p class="font-medium text-gray-400">bill.png</p>
-                                                    </div>
+                                                    </div> --}}
                                                 </div>
                                             @endforeach
                                         @endif
-
-                                        <form
-                                            action="{{ route('installments.updateInstallment', ['loanId' => $loan->id]) }}"
-                                            method="POST" enctype="multipart/form-data">
-                                            @csrf
-                                            @if ($errors->any())
-                                                <div
-                                                    class="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded mb-2">
-                                                    <ul class="text-sm">
-                                                        @foreach ($errors->all() as $error)
-                                                            <li>• {{ $error }}</li>
-                                                        @endforeach
-                                                    </ul>
-                                                </div>
-                                            @endif
-                                            <div class="grid gap-1">
-                                                <div class="flex justify-between items-center">
-                                                    <label for="amount" class="block text-xs font-medium">Amount
-                                                        *</label>
-                                                    @if ($installement->status == 'PAYED')
-                                                        <p>Rs. {{ number_format($installement->amount, 2) }}</p>
-                                                    @else
+                                        @if ($installement->status == 'UNPAYED')
+                                            <form
+                                                action="{{ route('installments.updateInstallment', ['loanId' => $loan->id]) }}"
+                                                method="POST" enctype="multipart/form-data">
+                                                @csrf
+                                                @if ($errors->any())
+                                                    <div
+                                                        class="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded mb-2">
+                                                        <ul class="text-sm">
+                                                            @foreach ($errors->all() as $error)
+                                                                <li>• {{ $error }}</li>
+                                                            @endforeach
+                                                        </ul>
+                                                    </div>
+                                                @endif
+                                                <div class="grid gap-1">
+                                                    <div class="flex justify-between items-center">
+                                                        <label for="amount" class="block text-xs font-medium">Amount
+                                                            *</label>
                                                         <input type="number" name="amount" id="amount"
                                                             value="{{ old('amount') }}"
                                                             class="no-spinner w-2/3 mt-1 px-3 py-1 border rounded-md sp"
                                                             required step="0.01">
-                                                    @endif
-                                                </div>
-                                                <div class="flex justify-between items-center w-full space-x-2">
-                                                    @if ($installement->status == 'PAYED')
+                                                    </div>
+                                                    {{-- <div class="flex justify-between items-center w-full space-x-2">
                                                         <div class="flex w-2/3 items-center space-x-2">
                                                             <label for="bill" name="image_1"
                                                                 class="block text-xs font-medium">Date *</label>
 
                                                             <p>{{ $installement->payed_date }}</p>
 
-                                                        </div>
-                                                    @endif
+                                                        </div> --}}
 
-                                                    <div class="flex w-1/3">
+                                                    {{-- <div class="flex w-1/3">
                                                         @if ($installement->status == 'PAYED')
                                                             <p></p>
                                                         @else
                                                             <input type="file" name="image_1" id="bill"
                                                                 class="w-full mt-1 px-2 py-1 border rounded-md text-sm bg-white">
                                                         @endif
-                                                    </div>
+                                                    </div> --}}
                                                 </div>
-                                                @if ($installement->status == 'UNPAYED')
-                                                    <div class="flex justify-end space-x-2 mt-3">
-                                                        <button type="button"
-                                                            class="cancel-btn bg-gray-300 text-black px-4 py-1 rounded-md hover:bg-gray-400">Cancel</button>
-                                                        <button type="submit"
-                                                            class="save-btn bg-blue-600 text-white px-4 py-1 rounded-md hover:bg-blue-700">Save</button>
-                                                    </div>
-                                                @endif
-                                            </div>
-                                        </form>
+                                                <div class="flex justify-end space-x-2 mt-3">
+                                                    <button type="button"
+                                                        class="cancel-btn bg-gray-300 text-black px-4 py-1 rounded-md hover:bg-gray-400">Cancel</button>
+                                                    <button type="submit"
+                                                        class="save-btn bg-blue-600 text-white px-4 py-1 rounded-md hover:bg-blue-700">Save</button>
+                                                </div>
+
                                     </div>
-                                </div>
-                            @endforeach
-                        @endif
+                                    </form>
+                            @endif
                     </div>
                 </div>
+                @endforeach
+                @endif
             </div>
         </div>
+    </div>
+    </div>
     </div>
     </div>
 
