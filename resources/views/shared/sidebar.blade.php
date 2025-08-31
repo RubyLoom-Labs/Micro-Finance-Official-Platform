@@ -16,9 +16,10 @@
                     <a href="/dashboard"
                         class="flex items-center p-2 px-4 w-full rounded-lg hover:bg-sky-100 sidebar-toggle space-x-2 active:bg-sky-100 {{ request()->routeIs('dashboard') ? 'active' : '' }}">
                         <img src="{{ asset('assets/icons/DiamondsFour.svg') }}" alt="Dashboard Icon" class="h-4 w-4 ">
-                        <span class="sidebar-text">Dashboard</span>
+                        <span class="sidebar-text">Dashboard </span>
                     </a>
                 </li>
+
                 <!-- Branches (with Submenu) -->
                 <li>
                     <button
@@ -35,21 +36,25 @@
                     </button>
                     <!-- Submenu for Branches -->
                     <ul class="space-y-2 submenu hidden pl-4 mt-2 bg-white w-44">
-                        <li>
-                            <a href="/centers"
-                                class="flex items-center justify-start p-1 px-4 rounded-md space-x-2 hover:bg-sky-100 active:bg-sky-200 {{ request()->routeIs('centers.viewblade') ? 'active' : '' }}">
-                                <img src="{{ asset('assets/icons/MapPinLine.svg') }}" alt="Centers Icon"
-                                    class="h-4 w-4">
-                                <span class="sidebar-text-mini">Centers</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/members"
-                                class="flex items-center p-1 px-4 rounded-md space-x-2 hover:bg-sky-100 active:bg-sky-200 {{ request()->routeIs('members.viewblade') ? 'active' : '' }}">
-                                <img src="{{ asset('assets/icons/Users.svg') }}" alt="Members Icon" class="h-4 w-4">
-                                <span class="sidebar-text-mini">Members</span>
-                            </a>
-                        </li>
+                        @if (Auth::user()->user_role->centers != 0)
+                            <li>
+                                <a href="/centers"
+                                    class="flex items-center justify-start p-1 px-4 rounded-md space-x-2 hover:bg-sky-100 active:bg-sky-200 {{ request()->routeIs('centers.viewblade') ? 'active' : '' }}">
+                                    <img src="{{ asset('assets/icons/MapPinLine.svg') }}" alt="Centers Icon"
+                                        class="h-4 w-4">
+                                    <span class="sidebar-text-mini">Centers</span>
+                                </a>
+                            </li>
+                        @endif
+                        @if (Auth::user()->user_role->members != 0)
+                            <li>
+                                <a href="/members"
+                                    class="flex items-center p-1 px-4 rounded-md space-x-2 hover:bg-sky-100 active:bg-sky-200 {{ request()->routeIs('members.viewblade') ? 'active' : '' }}">
+                                    <img src="{{ asset('assets/icons/Users.svg') }}" alt="Members Icon" class="h-4 w-4">
+                                    <span class="sidebar-text-mini">Members</span>
+                                </a>
+                            </li>
+                        @endif
                         {{-- <li>
                             <a href="recentlyAdded"
                                 class="flex items-center p-1 px-4 rounded-md space-x-2 hover:bg-sky-100 active:bg-sky-200">
@@ -232,22 +237,26 @@
                     </button>
                     <!-- Submenu for Settings -->
                     <ul class="space-y-2 submenu hidden pl-4 mt-2 bg-white w-44">
-                        <li>
-                            <a href="/userAccount"
-                                class="flex items-center p-1 px-4 rounded-md space-x-2 hover:bg-sky-100 active:bg-sky-200">
-                                <img src="{{ asset('assets/icons/UserSwitch.svg') }}" alt="User Account Icon"
-                                    class="h-4 w-4">
-                                <span class="sidebar-text-mini">User Account</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/userRole"
-                                class="flex items-center p-1 px-4 rounded-md space-x-2 hover:bg-sky-100 active:bg-sky-200">
-                                <img src="{{ asset('assets/icons/GearSix.svg') }}" alt="Settings Icon"
-                                    class="h-4 w-4">
-                                <span class="sidebar-text-mini">User Roles</span>
-                            </a>
-                        </li>
+                        @if (Auth::user()->user_role->user_accounts_creation == 1)
+                            <li>
+                                <a href="/userAccount"
+                                    class="flex items-center p-1 px-4 rounded-md space-x-2 hover:bg-sky-100 active:bg-sky-200">
+                                    <img src="{{ asset('assets/icons/UserSwitch.svg') }}" alt="User Account Icon"
+                                        class="h-4 w-4">
+                                    <span class="sidebar-text-mini">User Account</span>
+                                </a>
+                            </li>
+                        @endif
+                        @if (Auth::user()->user_role->user_role_creation == 1)
+                            <li>
+                                <a href="/userRole"
+                                    class="flex items-center p-1 px-4 rounded-md space-x-2 hover:bg-sky-100 active:bg-sky-200">
+                                    <img src="{{ asset('assets/icons/GearSix.svg') }}" alt="Settings Icon"
+                                        class="h-4 w-4">
+                                    <span class="sidebar-text-mini">User Roles</span>
+                                </a>
+                            </li>
+                        @endif
                         <li>
                             <a href="/userLogs"
                                 class="flex items-center p-1 px-4 rounded-md space-x-2 hover:bg-sky-100 active:bg-sky-200">
@@ -263,7 +272,8 @@
         </nav>
         <!-- User Avatar -->
         <div class="h-12 px-2 content-end sidebar-toggle">
-            <a href="/profile" class="flex items-center space-x-2 border border-blue-300 rounded-full text-small username ">
+            <a href="/profile"
+                class="flex items-center space-x-2 border border-blue-300 rounded-full text-small username ">
                 <img src="{{ asset('icons/Users.png') }}" alt="User Avatar"
                     class=" h-6 w-6 rounded-full bg-blue-800 border border-blue-300">
                 <span class="text-xs sidebar-text">

@@ -147,7 +147,9 @@
                             <select id="branchSelect" name="branch"
                                 class="w-full absolute p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white appearance-none hidden text-sm lg:text-xs">
                                 <option class="text-sm" value="">Select Branch</option>
-                                <option value="add_new">+ Add New Branch</option>
+                                @if (Auth::user()->user_role->branch_creation == 1)
+                                    <option value="add_new">+ Add New Branch</option>
+                                @endif
                                 @foreach ($all_active_branches as $branch_name)
                                     <option value={{ $branch_name->branch_name }}>
                                         {{ capitalizeFirstLetter($branch_name->branch_name) }}</option>
@@ -169,9 +171,10 @@
                             <div id="dropdownMenu"
                                 class="hidden absolute z-10 w-full bg-white border rounded-lg mt-1 shadow-lg lg:text-xs">
                                 <ul class="py-1 px-8 lg:px-4 lg:text-xs">
-                                    <li class="px-4 py-2 text-sm text-center hover:bg-gray-100 cursor-pointer border-b lg:text-xs"
-                                        data-value="add_new" id="addBranchButton">+ Add New Branch</li>
-
+                                    @if (Auth::user()->user_role->branch_creation == 1)
+                                        <li class="px-4 py-2 text-sm text-center hover:bg-gray-100 cursor-pointer border-b lg:text-xs"
+                                            data-value="add_new" id="addBranchButton">+ Add New Branch</li>
+                                    @endif
                                     @foreach ($all_active_branches as $branch_name)
                                         <li class="px-4 py-2 text-sm text-center hover:bg-gray-100 cursor-pointer border-b lg:text-xs"
                                             data-value={{ $branch_name->branch_name }}>
@@ -235,7 +238,7 @@
                                     <tr class="uppercase w-full">
                                         <th class="pl-2 text-left">
                                             <!--<input type="checkbox" id="select-all"
-                                                                                class="form-checkbox h-4 w-4 text-blue-400 m-1">-->
+                                                                                            class="form-checkbox h-4 w-4 text-blue-400 m-1">-->
                                         </th>
                                         <th class="py-2 px-2 text-left">#</th>
                                         <th class="py-2 text-left">Center Name</th>
@@ -257,7 +260,7 @@
                                             data-groups-array='@json($center->group)'>
                                             <td class="pl-2 text-left">
                                                 <!--<input type="checkbox" name="selected_ids[]" value="1"
-                                                                                    class="form-checkbox h-4 w-4 text-blue-600 m-1">-->
+                                                                                                class="form-checkbox h-4 w-4 text-blue-600 m-1">-->
                                             </td>
                                             <td class="py-2 text-left"> {{ str_pad($center->id, 3, '0', STR_PAD_LEFT) }}
                                             </td>

@@ -259,12 +259,14 @@
                         <div class="flex w-full lg:w-1/3 justify-between lg:justify-end items-end space-x-2 pt-4">
                             <div class="flex flex-row lg:space-x-2 bg-white lg:text-xs w-full justify-end">
                                 <!-- Edit -->
-                                <button id="editCustomerBtn" type="button"
-                                    class="bg-blue-600 text-white p-1 lg:p-1 rounded-lg hover:bg-blue-700 flex items-center justify-center px-6 lg:w-28 w-full lg:mr-0">
-                                    <img src="{{ asset('assets/icons/PencilSimpleWhite.svg') }}" alt="Edit"
-                                        class="h-3 w-3 mr-2">
-                                    <span class="text-sm">Edit</span>
-                                </button>
+                                @if (Auth::user()->user_role->members == 2 || Auth::user()->user_role->members == 3)
+                                    <button id="editCustomerBtn" type="button"
+                                        class="bg-blue-600 text-white p-1 lg:p-1 rounded-lg hover:bg-blue-700 flex items-center justify-center px-6 lg:w-28 w-full lg:mr-0">
+                                        <img src="{{ asset('assets/icons/PencilSimpleWhite.svg') }}" alt="Edit"
+                                            class="h-3 w-3 mr-2">
+                                        <span class="text-sm">Edit</span>
+                                    </button>
+                                @endif
                                 <!-- Save -->
                                 <button id="saveCustomerBtn" type="submit"
                                     class="bg-green-600 text-white p-1 lg:p-1 rounded-lg hover:bg-green-700 hidden items-center justify-center px-6 lg:w-28 w-full lg:mr-0">
@@ -272,12 +274,14 @@
                                         class="h-3 w-3 mr-2">
                                     <span>Save</span>
                                 </button>
-                                <button id="deleteBtn" type="button"
-                                    class="bg-red-600 text-white p-1 lg:p-2 rounded-lg hover:bg-red-700 flex items-center justify-center px-4 w-1/2 lg:w-28">
-                                    <img src="{{ asset('assets/icons/TrashWhite.svg') }}" alt="Delete"
-                                        class="h-3 w-3 mr-2">
-                                    <span>Delete</span>
-                                </button>
+                                @if (Auth::user()->user_role->members == 3)
+                                    <button id="deleteBtn" type="button"
+                                        class="bg-red-600 text-white p-1 lg:p-2 rounded-lg hover:bg-red-700 flex items-center justify-center px-4 w-1/2 lg:w-28">
+                                        <img src="{{ asset('assets/icons/TrashWhite.svg') }}" alt="Delete"
+                                            class="h-3 w-3 mr-2">
+                                        <span>Delete</span>
+                                    </button>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -291,10 +295,12 @@
                                 class="bg-gray-300 text-black p-2 rounded-lg hover:bg-gray-500 flex items-center px-4 text-xs">
                                 <span>Cancel</span>
                             </button>
-                            <button id="confirmDelete"
-                                class="bg-red-600 text-white p-2 rounded-lg hover:bg-red-700 flex items-center px-4 text-xs">
-                                <span>Delete</span>
-                            </button>
+                            @if (Auth::user()->user_role->members == 3)
+                                <button id="confirmDelete"
+                                    class="bg-red-600 text-white p-2 rounded-lg hover:bg-red-700 flex items-center px-4 text-xs">
+                                    <span>Delete</span>
+                                </button>
+                            @endif
                         </div>
                     </div>
                 </div>

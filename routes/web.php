@@ -31,7 +31,7 @@ Route::get('/signup', function () {
 });
 Route::post('user/login', [UserController::class, 'login']);
 
-
+Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', function () {
         return view('dashboard');
     })->name('dashboard');
@@ -147,4 +147,5 @@ Route::post('user/login', [UserController::class, 'login']);
         return view('reports/membersReport');
     });
 
-/*Settings*/
+    /*Settings*/
+});

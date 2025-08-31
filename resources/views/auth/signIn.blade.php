@@ -106,9 +106,8 @@
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value.trim();
             const errorContainer = document.getElementById('loginError');
-            errorContainer.innerHTML = ''; // Clear previous errors
-            window.location.href = '/dashboard'
-            /*  try {
+            errorContainer.innerHTML = '';
+             try {
                  const response = await fetch('user/login', {
                      method: 'POST',
                      headers: {
@@ -144,7 +143,7 @@
              } catch (err) {
                  console.error('Error:', err);
                  errorContainer.textContent = 'Server error. Please try again later.';
-             } */
+             }
         });
     </script>
 @endsection
