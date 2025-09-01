@@ -25,6 +25,23 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        //
+        Gate::define('create-user-accounts', fn($user) => $user->user_role->user_accounts_creation == 1);
+        Gate::define('dashboard', fn($user) => $user->user_role->dashboard == 1);
+        Gate::define('branch_creation', fn($user) => $user->user_role->branch_creation == 1);
+        Gate::define('create-user-roles', fn($user) => $user->user_role->user_role_creation == 1);
+        Gate::define('centers-view', function ($user) {
+            return in_array($user->user_role->centers, [1, 2, 3]);
+        });
+        Gate::define('centers-edit', function ($user) {
+            return in_array($user->user_role->centers, [2, 3]);
+        });
+        Gate::define('centers-delete', fn($user) => $user->user_role->centers == 3);
+         Gate::define('members-view', function ($user) {
+            return in_array($user->user_role->members, [1, 2, 3]);
+        });
+        Gate::define('members-edit', function ($user) {
+            return in_array($user->user_role->members, [2, 3]);
+        });
+        Gate::define('members-delete', fn($user) => $user->user_role->members == 3);
     }
 }

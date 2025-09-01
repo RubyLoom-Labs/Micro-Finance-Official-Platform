@@ -382,10 +382,12 @@
                     </div>
                     <!-- Add Member Button -->
                     <div class="w-full text-sm lg:text-xs lg:w-3/12">
-                        <button id="addNewMemberButton" value="add_new_member"
-                            class="w-full bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 focus:outline-none">
-                            + Add Member
-                        </button>
+                        @if (Auth::user()->user_role->members == 2 || Auth::user()->user_role->members == 3)
+                            <button id="addNewMemberButton" value="add_new_member"
+                                class="w-full bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 focus:outline-none">
+                                + Add Member
+                            </button>
+                        @endif
                     </div>
                 </div>
 
@@ -421,9 +423,9 @@
                                 <thead class="w-full text-gray-700 text-xs font-light bg-gray-100 sticky top-0">
                                     <tr class="uppercase w-full">
                                         <!--<th class="pl-2 text-left">
-                                                                                                                                                                                                                                                                                                                    <input type="checkbox" id="select-all"
-                                                                                                                                                                                                                                                                                                                        class="form-checkbox h-4 w-4 text-blue-400 m-1">
-                                                                                                                                                                                                                             </th>-->
+                                                                                                                                                                                                                                                                                                                        <input type="checkbox" id="select-all"
+                                                                                                                                                                                                                                                                                                                            class="form-checkbox h-4 w-4 text-blue-400 m-1">
+                                                                                                                                                                                                                                 </th>-->
                                         <th class="py-2 text-center">#</th>
                                         <th class="py-2 text-left">Name</th>
                                         <th class="py-2 text-left">Center</th>
@@ -444,9 +446,9 @@
                                                 data-member_id='{{ $member->nic_number }}' data-loan-balance="20000"
                                                 data-member='@json($member)'>
                                                 <!--<td class="pl-2 text-left">
-                                                                                                                                                                                                                                                                                                                        <input type="checkbox" name="selected_ids[]" value="1"
-                                                                                                                                                                                                                                                                                                                            class="form-checkbox h-4 w-4 text-blue-600 m-1">
-                                                                                                                                                                                                                                                                                                                    </td>-->
+                                                                                                                                                                                                                                                                                                                            <input type="checkbox" name="selected_ids[]" value="1"
+                                                                                                                                                                                                                                                                                                                                class="form-checkbox h-4 w-4 text-blue-600 m-1">
+                                                                                                                                                                                                                                                                                                                        </td>-->
                                                 <td class="py-2 text-center">
                                                     {{ str_pad($member->id, 3, '0', STR_PAD_LEFT) }}
                                                 </td>
@@ -504,9 +506,9 @@
                                                 data-member_id='{{ $member->nic_number }}' data-loan-balance="20000"
                                                 data-member='@json($member)'>
                                                 <!--<td class="pl-2 text-left">
-                                                                                                                                                                                                                                                                                                                        <input type="checkbox" name="selected_ids[]" value="1"
-                                                                                                                                                                                                                                                                                                                            class="form-checkbox h-4 w-4 text-blue-600 m-1">
-                                                                                                                                                                                                                                                                                                                    </td>-->
+                                                                                                                                                                                                                                                                                                                            <input type="checkbox" name="selected_ids[]" value="1"
+                                                                                                                                                                                                                                                                                                                                class="form-checkbox h-4 w-4 text-blue-600 m-1">
+                                                                                                                                                                                                                                                                                                                        </td>-->
                                                 <td class="py-2 text-center">
                                                     {{ str_pad($member->id, 3, '0', STR_PAD_LEFT) }}
                                                 </td>

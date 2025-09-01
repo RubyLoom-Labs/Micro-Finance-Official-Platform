@@ -181,13 +181,13 @@
                             <img src="{{ asset('assets/icons/CaretLeft.svg') }}" alt="Pencil" class="h-3 w-3 m-1"> Back
                         </button>
                     </div>
-                    <div class="w-40 text-sm lg:text-xs ">
+                    {{-- <div class="w-40 text-sm lg:text-xs ">
                         <button id="getGroupSummary" value=""
                             class="w-full bg-blue-600 text-white p-1 rounded-lg hover:bg-blue-700 focus:outline-none flex justify-center">
                             <img src="{{ asset('assets/icons/ArrowLineDownWhite.svg') }}" alt="Pencil"
                                 class="h-3 w-3 m-1"> Get Group Summary
                         </button>
-                    </div>
+                    </div> --}}
 
                 </div>
                 <form action="{{ route('groups.updateGroup', ['groupId' => $group_details->id]) }}" method="POST">
@@ -344,10 +344,12 @@
                     </div>
                     <!-- Add Center Button -->
                     <div class="w-full text-sm lg:text-xs lg:w-3/12">
-                        <button id="addMemberButton" value="add_new"
-                            class="w-full bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 focus:outline-none">
-                            + Add Memeber
-                        </button>
+                        @if (Auth::user()->user_role->members == 2 || Auth::user()->user_role->members == 3)
+                            <button id="addMemberButton" value="add_new"
+                                class="w-full bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 focus:outline-none">
+                                + Add Memeber
+                            </button>
+                        @endif
                     </div>
                 </div>
 

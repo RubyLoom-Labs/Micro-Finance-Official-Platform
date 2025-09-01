@@ -10,6 +10,7 @@ use App\Http\Controllers\LogController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserRoleController;
+use GuzzleHttp\Middleware;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -37,15 +38,15 @@ Route::middleware(['auth'])->group(function () {
     })->name('dashboard');
 
     //branches routes
-    Route::post('/branches/create',  [BranchController::class, 'create_branch'])->name('branches.createbranch');
+    Route::post('/branches/create',  [BranchController::class, 'create_branch'])->middleware(['can:branch_creation'])->name('branches.createbranch');
 
     //centers routes
-    Route::get('/centers', [CenterController::class, 'getAllActiveCenters'])->name('centers.viewblade');
-    Route::post('/centers/create',  [CenterController::class, 'createCenter'])->name('centers.createcenter');
+    Route::get('/centers', [CenterController::class, 'getAllActiveCenters'])->middleware(['can:centers-view'])->name('centers.viewblade');
+    Route::post('/centers/create',  [CenterController::class, 'createCenter'])->middleware(['can:centers-edit'])->name('centers.createcenter');
     Route::get('/centers/{branchId}', [CenterController::class, 'getCentersByBranch']);
-    Route::get('/centerSummary/{centerId}', [CenterController::class, 'viewCenterSummary'])->name('center.summary');
-    Route::delete('/centers/delete/{centerId}', [CenterController::class, 'deleteCenter']);
-    Route::post('/centers/update/{centerId}', [CenterController::class, 'updateCenter'])->name('centers.updateCenter');
+    Route::get('/centerSummary/{centerId}', [CenterController::class, 'viewCenterSummary'])->middleware(['can:centers-view'])->name('center.summary');
+    Route::delete('/centers/delete/{centerId}', [CenterController::class, 'deleteCenter'])->middleware(['can:centers-delete']);
+    Route::post('/centers/update/{centerId}', [CenterController::class, 'updateCenter'])->middleware(['can:centers-edit'])->name('centers.updateCenter');
 
 
     //group route
@@ -61,12 +62,12 @@ Route::middleware(['auth'])->group(function () {
     Route::get(
         '/members',
         [MemberController::class, 'viewAllMembers']
-    )->name('members.viewblade');
-    Route::post('/members/create', [MemberController::class, 'createMember'])->name('members.create');
+    )->middleware(['can:members-view'])->name('members.viewblade');
+    Route::post('/members/create', [MemberController::class, 'createMember'])->middleware(['can:members-edit'])->name('members.create');
     Route::get('/unassignmembers/search',  [MemberController::class, 'unAssignMemberSearch']);
-    Route::get('/memberSummery/{memberId}', [MemberController::class, 'viewMemberSummary'])->name('member.summary');
-    Route::post('/members/update/{memberId}', [MemberController::class, 'updateMember'])->name('members.updateMember');
-    Route::delete('/members/delete/{memberId}', [MemberController::class, 'deleteMember']);
+    Route::get('/memberSummery/{memberId}', [MemberController::class, 'viewMemberSummary'])->middleware(['can:members-view'])->name('member.summary');
+    Route::post('/members/update/{memberId}', [MemberController::class, 'updateMember'])->middleware(['can:members-edit'])->name('members.updateMember');
+    Route::delete('/members/delete/{memberId}', [MemberController::class, 'deleteMember'])->middleware(['can:members-delete']);
 
 
     //loans routes
@@ -81,15 +82,15 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/underpayment', [CenterController::class, 'underPaymentView'])->name('centers.viewUnderPaymentBlade');
 
     //user roles routes
-    Route::get('/userRole', [UserRoleController::class, 'userRolesView']);
-    Route::post('/userRole/create', [UserRoleController::class, 'createUserRole'])->name('userRoles.create');
-    Route::post('/userRole/update', [UserRoleController::class, 'updateUserRole'])->name('userRoles.update');
+    Route::get('/userRole', [UserRoleController::class, 'userRolesView'])->middleware(['can:create-user-roles']);
+    Route::post('/userRole/create', [UserRoleController::class, 'createUserRole'])->middleware(['can:create-user-roles'])->name('userRoles.create');
+    Route::post('/userRole/update', [UserRoleController::class, 'updateUserRole'])->middleware(['can:create-user-roles'])->name('userRoles.update');
 
     //user routes
-    Route::get('/userAccount', [UserController::class, 'usersView'])->name('user.viewblade');
-    Route::post('/userAccount/create', [UserController::class, 'createUser'])->name('user.create');
-    Route::post('/userAccount/update', [UserController::class, 'updateUser'])->name('user.update');
-    Route::post('/userAccount/updatepw', [UserController::class, 'updatePwUser'])->name('user.updatePw');
+    Route::get('/userAccount', [UserController::class, 'usersView'])->middleware(['can:create-user-accounts'])->name('user.viewblade');
+    Route::post('/userAccount/create', [UserController::class, 'createUser'])->middleware(['can:create-user-accounts'])->name('user.create');
+    Route::post('/userAccount/update', [UserController::class, 'updateUser'])->middleware(['can:create-user-accounts'])->name('user.update');
+    Route::post('/userAccount/updatepw', [UserController::class, 'updatePwUser'])->middleware(['can:create-user-accounts'])->name('user.updatePw');
     Route::get('user/logout', [UserController::class, 'logout'])->name('user.logout');
     Route::get('/userLogs', function () {
         return view('settings/userLogs');

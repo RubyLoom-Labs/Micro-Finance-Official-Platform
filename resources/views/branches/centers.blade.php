@@ -192,10 +192,12 @@
                     </div>
                     <!-- Add Center Button -->
                     <div class="w-full text-sm lg:text-xs lg:w-3/12">
-                        <button id="addCenterButton" value="add_new"
-                            class="w-full bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 focus:outline-none">
-                            + Add Center
-                        </button>
+                        @if (Auth::user()->user_role->centers == 2 || Auth::user()->user_role->centers == 3)
+                            <button id="addCenterButton" value="add_new"
+                                class="w-full bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 focus:outline-none">
+                                + Add Center
+                            </button>
+                        @endif
                     </div>
                 </div>
 
@@ -238,7 +240,7 @@
                                     <tr class="uppercase w-full">
                                         <th class="pl-2 text-left">
                                             <!--<input type="checkbox" id="select-all"
-                                                                                            class="form-checkbox h-4 w-4 text-blue-400 m-1">-->
+                                                                                                class="form-checkbox h-4 w-4 text-blue-400 m-1">-->
                                         </th>
                                         <th class="py-2 px-2 text-left">#</th>
                                         <th class="py-2 text-left">Center Name</th>
@@ -260,7 +262,7 @@
                                             data-groups-array='@json($center->group)'>
                                             <td class="pl-2 text-left">
                                                 <!--<input type="checkbox" name="selected_ids[]" value="1"
-                                                                                                class="form-checkbox h-4 w-4 text-blue-600 m-1">-->
+                                                                                                    class="form-checkbox h-4 w-4 text-blue-600 m-1">-->
                                             </td>
                                             <td class="py-2 text-left"> {{ str_pad($center->id, 3, '0', STR_PAD_LEFT) }}
                                             </td>
