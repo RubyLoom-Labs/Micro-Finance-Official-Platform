@@ -75,133 +75,144 @@
                 </li>
 
                 <!-- Income (with Submenu) -->
-                <li>
-                    <button
-                        class="flex items-center justify-between p-2 px-4 w-full rounded-lg hover:bg-sky-100 active:bg-sky-200 sidebar-toggle space-x-2">
-                        <div class="flex items-center space-x-2">
-                            <img src="{{ asset('assets/icons/CurrencyDollar.svg') }}" alt="Income Icon" class="h-4 w-4">
-                            <span class="sidebar-text">Income</span>
-                        </div>
-                        <svg class="w-4 h-4 transform transition-transform duration-200 arrow sidebar-arrow"
-                            fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
-                            </path>
-                        </svg>
-                    </button>
-                    <!-- Submenu for Income -->
-                    <ul class="space-y-2 submenu hidden pl-4 mt-2 bg-white w-44">
-                        <li>
-                            <a href="/income"
-                                class="flex items-center p-1 px-4 rounded-md space-x-2 hover:bg-sky-100 active:bg-sky-200">
-                                <img src="{{ asset('assets/icons/ChartLineUp.svg') }}" alt="Income Report Icon"
+                @if (Auth::user()->user_role->income == 1)
+                    <li>
+                        <button
+                            class="flex items-center justify-between p-2 px-4 w-full rounded-lg hover:bg-sky-100 active:bg-sky-200 sidebar-toggle space-x-2">
+                            <div class="flex items-center space-x-2">
+                                <img src="{{ asset('assets/icons/CurrencyDollar.svg') }}" alt="Income Icon"
                                     class="h-4 w-4">
-                                <span class="sidebar-text-mini">Income</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/collection"
-                                class="flex items-center p-1 px-4 rounded-md space-x-2 hover:bg-sky-100 active:bg-sky-200">
-                                <img src="{{ asset('assets/icons/CurrencyCircleDollar.svg') }}" alt="Collections Icon"
-                                    class="h-4 w-4">
-                                <span class="sidebar-text-mini">Collections</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/underpayment"
-                                class="flex items-center p-1 px-4 rounded-md space-x-2 hover:bg-sky-100 active:bg-sky-200">
-                                <img src="{{ asset('assets/icons/pay01.svg') }}" alt="Under Payments Icon"
-                                    class="h-4 w-4">
-                                <span class="sidebar-text-mini">Under Payments</span>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-
+                                <span class="sidebar-text">Income</span>
+                            </div>
+                            <svg class="w-4 h-4 transform transition-transform duration-200 arrow sidebar-arrow"
+                                fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7">
+                                </path>
+                            </svg>
+                        </button>
+                        <!-- Submenu for Income -->
+                        <ul class="space-y-2 submenu hidden pl-4 mt-2 bg-white w-44">
+                            <li>
+                                <a href="/income"
+                                    class="flex items-center p-1 px-4 rounded-md space-x-2 hover:bg-sky-100 active:bg-sky-200">
+                                    <img src="{{ asset('assets/icons/ChartLineUp.svg') }}" alt="Income Report Icon"
+                                        class="h-4 w-4">
+                                    <span class="sidebar-text-mini">Income</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/collection"
+                                    class="flex items-center p-1 px-4 rounded-md space-x-2 hover:bg-sky-100 active:bg-sky-200">
+                                    <img src="{{ asset('assets/icons/CurrencyCircleDollar.svg') }}"
+                                        alt="Collections Icon" class="h-4 w-4">
+                                    <span class="sidebar-text-mini">Collections</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/underpayment"
+                                    class="flex items-center p-1 px-4 rounded-md space-x-2 hover:bg-sky-100 active:bg-sky-200">
+                                    <img src="{{ asset('assets/icons/pay01.svg') }}" alt="Under Payments Icon"
+                                        class="h-4 w-4">
+                                    <span class="sidebar-text-mini">Under Payments</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                @endif
                 <!-- Payments (with Submenu) -->
-                <li>
-                    <button
-                        class="flex items-center justify-between p-2 px-4 w-full rounded-lg hover:bg-sky-100 active:bg-sky-200 sidebar-toggle space-x-2">
-                        <div class="flex items-center space-x-2">
-                            <img src="{{ asset('assets/icons/Money.svg') }}" alt="Payments Icon" class="h-4 w-4">
-                            <span class="sidebar-text">Payments</span>
-                        </div>
-                        <svg class="w-4 h-4 transform transition-transform duration-200 arrow sidebar-arrow"
-                            fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
-                            </path>
-                        </svg>
-                    </button>
-                    <!-- Submenu for Payments -->
-                    <ul class="space-y-2 submenu hidden pl-4 mt-2 bg-white w-44">
-                        <li>
-                            <a href="/payments"
-                                class="flex items-center p-1 px-4 rounded-md space-x-2 hover:bg-sky-100 active:bg-sky-200">
+                @if (Auth::user()->user_role->payments == 1)
+                    <li>
+                        <button
+                            class="flex items-center justify-between p-2 px-4 w-full rounded-lg hover:bg-sky-100 active:bg-sky-200 sidebar-toggle space-x-2">
+                            <div class="flex items-center space-x-2">
                                 <img src="{{ asset('assets/icons/Money.svg') }}" alt="Payments Icon" class="h-4 w-4">
-                                <span class="sidebar-text-mini">Payments</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/pending"
-                                class="flex items-center p-1 px-4 rounded-md space-x-2 hover:bg-sky-100 active:bg-sky-200">
-                                <img src="{{ asset('assets/icons/HourglassHigh.svg') }}" alt="Pending Icon"
-                                    class="h-4 w-4">
-                                <span class="sidebar-text-mini">Pending</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/nopaid"
-                                class="flex items-center p-1 px-4 rounded-md space-x-2 hover:bg-sky-100 active:bg-sky-200">
-                                <img src="{{ asset('assets/icons/MinusCircle.svg') }}" alt="No Paid Icon"
-                                    class="h-4 w-4">
-                                <span class="sidebar-text-mini">No Paid</span>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-
+                                <span class="sidebar-text">Payments</span>
+                            </div>
+                            <svg class="w-4 h-4 transform transition-transform duration-200 arrow sidebar-arrow"
+                                fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7">
+                                </path>
+                            </svg>
+                        </button>
+                        <!-- Submenu for Payments -->
+                        <ul class="space-y-2 submenu hidden pl-4 mt-2 bg-white w-44">
+                            <li>
+                                <a href="/payments"
+                                    class="flex items-center p-1 px-4 rounded-md space-x-2 hover:bg-sky-100 active:bg-sky-200">
+                                    <img src="{{ asset('assets/icons/Money.svg') }}" alt="Payments Icon"
+                                        class="h-4 w-4">
+                                    <span class="sidebar-text-mini">Payments</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/pending"
+                                    class="flex items-center p-1 px-4 rounded-md space-x-2 hover:bg-sky-100 active:bg-sky-200">
+                                    <img src="{{ asset('assets/icons/HourglassHigh.svg') }}" alt="Pending Icon"
+                                        class="h-4 w-4">
+                                    <span class="sidebar-text-mini">Pending</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/nopaid"
+                                    class="flex items-center p-1 px-4 rounded-md space-x-2 hover:bg-sky-100 active:bg-sky-200">
+                                    <img src="{{ asset('assets/icons/MinusCircle.svg') }}" alt="No Paid Icon"
+                                        class="h-4 w-4">
+                                    <span class="sidebar-text-mini">No Paid</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                @endif
                 <!-- Reports (with Submenu) -->
-                <li>
-                    <button
-                        class="flex items-center justify-between p-2 px-4 w-full rounded-lg hover:bg-sky-100 active:bg-sky-200 sidebar-toggle space-x-2">
-                        <div class="flex items-center space-x-2">
-                            <img src="{{ asset('assets/icons/IdentificationCard.svg') }}" alt="Reports Icon"
-                                class="h-4 w-4">
-                            <span class="sidebar-text">Reports</span>
-                        </div>
-                        <svg class="w-4 h-4 transform transition-transform duration-200 arrow sidebar-arrow"
-                            fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
-                            </path>
-                        </svg>
-                    </button>
-                    <!-- Submenu for Reports -->
-                    <ul class="space-y-2 submenu hidden pl-4 mt-2 bg-white w-44">
-                        <li>
-                            <a href="/loneIssue"
-                                class="flex items-center p-1 px-4 rounded-md space-x-2 hover:bg-sky-100 active:bg-sky-200">
-                                <img src="{{ asset('assets/icons/ChartBarHorizontal.svg') }}" alt="Lone Issue Icon"
+                @if (Auth::user()->user_role->reports == 1)
+                    <li>
+                        <button
+                            class="flex items-center justify-between p-2 px-4 w-full rounded-lg hover:bg-sky-100 active:bg-sky-200 sidebar-toggle space-x-2">
+                            <div class="flex items-center space-x-2">
+                                <img src="{{ asset('assets/icons/IdentificationCard.svg') }}" alt="Reports Icon"
                                     class="h-4 w-4">
-                                <span class="sidebar-text-mini">Lone Issue</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/incomeReports"
-                                class="flex items-center p-1 px-4 rounded-md space-x-2 hover:bg-sky-100 active:bg-sky-200">
-                                <img src="{{ asset('assets/icons/ChartLineUp.svg') }}" alt="Income Icon"
-                                    class="h-4 w-4">
-                                <span class="sidebar-text-mini">Income Reports</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/pendingPaymentsReport"
-                                class="flex items-center p-1 px-4 rounded-md space-x-2 hover:bg-sky-100 active:bg-sky-200">
-                                <img src="{{ asset('assets/icons/HourglassHigh.svg') }}" alt="Pending Payments Icon"
-                                    class="h-4 w-4">
-                                <span class="sidebar-text-mini">Pending Payments</span>
-                            </a>
-                        </li>
-                        {{-- <li>
+                                <span class="sidebar-text">Reports</span>
+                            </div>
+                            <svg class="w-4 h-4 transform transition-transform duration-200 arrow sidebar-arrow"
+                                fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7">
+                                </path>
+                            </svg>
+                        </button>
+                        <!-- Submenu for Reports -->
+
+                        <ul class="space-y-2 submenu hidden pl-4 mt-2 bg-white w-44">
+                            <li>
+                                <a href="/loneIssue"
+                                    class="flex items-center p-1 px-4 rounded-md space-x-2 hover:bg-sky-100 active:bg-sky-200">
+                                    <img src="{{ asset('assets/icons/ChartBarHorizontal.svg') }}"
+                                        alt="Lone Issue Icon" class="h-4 w-4">
+                                    <span class="sidebar-text-mini">Lone Issue</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/incomeReports"
+                                    class="flex items-center p-1 px-4 rounded-md space-x-2 hover:bg-sky-100 active:bg-sky-200">
+                                    <img src="{{ asset('assets/icons/ChartLineUp.svg') }}" alt="Income Icon"
+                                        class="h-4 w-4">
+                                    <span class="sidebar-text-mini">Income Reports</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/pendingPaymentsReport"
+                                    class="flex items-center p-1 px-4 rounded-md space-x-2 hover:bg-sky-100 active:bg-sky-200">
+                                    <img src="{{ asset('assets/icons/HourglassHigh.svg') }}"
+                                        alt="Pending Payments Icon" class="h-4 w-4">
+                                    <span class="sidebar-text-mini">Pending Payments</span>
+                                </a>
+                            </li>
+                            {{-- <li>
                             <a href=""
                                 class="flex items-center p-1 px-4 rounded-md space-x-2 hover:bg-sky-100 active:bg-sky-200">
                                 <img src="{{ asset('assets/icons/Lockers.svg') }}" alt="Center Managers Icon"
@@ -209,17 +220,17 @@
                                 <span class="sidebar-text-mini">Center Managers</span>
                             </a>
                         </li> --}}
-                        <li>
-                            <a href="/membersReport"
-                                class="flex items-center p-1 px-4 rounded-md space-x-2 hover:bg-sky-100 active:bg-sky-200">
-                                <img src="{{ asset('assets/icons/UserGear.svg') }}" alt="Member Managers Icon"
-                                    class="h-4 w-4">
-                                <span class="sidebar-text-mini">Inactive Members</span>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-
+                            <li>
+                                <a href="/membersReport"
+                                    class="flex items-center p-1 px-4 rounded-md space-x-2 hover:bg-sky-100 active:bg-sky-200">
+                                    <img src="{{ asset('assets/icons/UserGear.svg') }}" alt="Member Managers Icon"
+                                        class="h-4 w-4">
+                                    <span class="sidebar-text-mini">Inactive Members</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                @endif
                 <!-- Settings (with Submenu) -->
                 <li>
                     <button
@@ -257,15 +268,16 @@
                                 </a>
                             </li>
                         @endif
-                        <li>
-                            <a href="/userLogs"
-                                class="flex items-center p-1 px-4 rounded-md space-x-2 hover:bg-sky-100 active:bg-sky-200">
-                                <img src="{{ asset('assets/icons/UserList.svg') }}" alt="User Logs Icon"
-                                    class="h-4 w-4">
-                                <span class="sidebar-text-mini">User Logs</span>
-                            </a>
-                        </li>
-
+                        @if (Auth::user()->user_role->user_logs == 1)
+                            <li>
+                                <a href="/userLogs"
+                                    class="flex items-center p-1 px-4 rounded-md space-x-2 hover:bg-sky-100 active:bg-sky-200">
+                                    <img src="{{ asset('assets/icons/UserList.svg') }}" alt="User Logs Icon"
+                                        class="h-4 w-4">
+                                    <span class="sidebar-text-mini">User Logs</span>
+                                </a>
+                            </li>
+                        @endif
                     </ul>
                 </li>
             </ul>

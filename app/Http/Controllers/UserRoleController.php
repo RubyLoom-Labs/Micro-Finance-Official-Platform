@@ -57,6 +57,9 @@ class UserRoleController extends Controller
                 'permissions.Income' => 'required|numeric',
                 'permissions.Payments' => 'required|numeric',
                 'permissions.Reports' => 'required|numeric',
+                'permissions.Loans' => 'required|numeric',
+                'permissions.Groups' => 'required|numeric',
+                'permissions.User Logs' => 'required|numeric',
             ]);
 
             $this->userRoleRepository->create([
@@ -76,6 +79,9 @@ class UserRoleController extends Controller
                 'income' => $permissions['Income'],
                 'payments' => $permissions['Payments'],
                 'reports' => $permissions['Reports'],
+                'loans' => $permissions['Loans'],
+                'groups' => $permissions['Groups'],
+                'user_logs' => $permissions['User Logs']
             ]);
 
             return redirect()->back()->with('success', 'User Role created successfully.');
@@ -113,6 +119,9 @@ class UserRoleController extends Controller
                 'income' => 'required|numeric',
                 'payments' => 'required|numeric',
                 'reports' => 'required|numeric',
+                'groups' => 'required|numeric',
+                'loans' => 'required|numeric',
+                'user_logs' => 'required|numeric',
             ]);
 
             $userRole = $this->userRoleRepository->search_one('id', $request->id);
@@ -126,17 +135,21 @@ class UserRoleController extends Controller
                 $userRole->income = $request->income;
                 $userRole->payments = $request->payments;
                 $userRole->reports = $request->reports;
+                $userRole->loans = $request->loans;
+                $userRole->groups = $request->groups;
+                $userRole->user_logs = $request->user_logs;
+
                 $userRole->save();
                 return response()->json(['status' => 'success', 'message' => 'Permissions updated']);
             }
         } catch (ValidationException $e) {
-             dd($e);
+            dd($e);
             return redirect()->back()
                 ->with('show_create_center_popup', true)
                 ->withInput()
                 ->withErrors($e->errors());
         } catch (\Exception $e) {
-             dd($e);
+            dd($e);
             Log::error('Error creating user role: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Something went wrong.');
         }

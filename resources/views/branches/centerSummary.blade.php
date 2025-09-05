@@ -335,7 +335,7 @@
                                 </button>
 
                                 <!-- Delete -->
-                                @if ( Auth::user()->user_role->centers == 3)
+                                @if (Auth::user()->user_role->centers == 3)
                                     <button id="deleteBtn" type="button"
                                         class="bg-red-600 text-white p-1 lg:p-2 rounded-lg hover:bg-red-700 flex items-center justify-center px-4 w-1/2 lg:w-28">
                                         <img src="{{ asset('assets/icons/TrashWhite.svg') }}" alt="Delete"
@@ -388,121 +388,131 @@
                     </div>
                     <!-- Add Center Button -->
                     <div class="w-full text-sm lg:text-xs lg:w-3/12">
-                        <button id="addGroupButton" value="add_new"
-                            class="w-full bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 focus:outline-none">
-                            + Add Group
-                        </button>
+                        @if (Auth::user()->user_role->groups == 2 || Auth::user()->user_role->groups == 3)
+                            <button id="addGroupButton" value="add_new"
+                                class="w-full bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 focus:outline-none">
+                                + Add Group
+                            </button>
+                        @endif
                     </div>
                 </div>
 
                 <p class="text-center text-xs my-2 text-gray-400 lg:hidden">Total Groups
                     {{ str_pad($center_details->group->count(), 2, '0', STR_PAD_LEFT) }}
                 </p>
+                @if (Auth::user()->user_role->groups > 0)
+                    <!-- Centers Grid card format hidden for lg screens -->
+                    <div id="centersGrid" class="grid grid-cols-2 sm:grid-cols-2 lg:hidden gap-4 p-2">
+                        @foreach ($center_details->group as $group)
+                            <div class="rounded-lg shadow flex flex-col justify-between w-full bg-blue-100 hover:bg-blue-200"
+                                data-group="Group02">
+                                <div class="h-24 py-2 px-4 flex flex-col justify-between space-y-1">
+                                    <div class="text-xs text-gray-600 text-right">
+                                        {{ capitalizeEachWord($group->group_name) }}
+                                    </div>
 
-                <!-- Centers Grid card format hidden for lg screens -->
-                <div id="centersGrid" class="grid grid-cols-2 sm:grid-cols-2 lg:hidden gap-4 p-2">
-                    @foreach ($center_details->group as $group)
-                        <div class="rounded-lg shadow flex flex-col justify-between w-full bg-blue-100 hover:bg-blue-200"
-                            data-group="Group02">
-                            <div class="h-24 py-2 px-4 flex flex-col justify-between space-y-1">
-                                <div class="text-xs text-gray-600 text-right">{{ capitalizeEachWord($group->group_name) }}
+                                    <div class="text-xs flex items-center space-x-1 text-gray-700">
+                                        <img src="{{ asset('assets/icons/Users.svg') }}" alt="Dashboard Icon"
+                                            class="h-3 w-3">
+                                        <p>Total Members -
+                                            <span>{{ str_pad($group->member->count(), 2, '0', STR_PAD_LEFT) }}</span>
+                                        </p>
+                                    </div>
                                 </div>
-
-                                <div class="text-xs flex items-center space-x-1 text-gray-700">
-                                    <img src="{{ asset('assets/icons/Users.svg') }}" alt="Dashboard Icon"
-                                        class="h-3 w-3">
-                                    <p>Total Members -
-                                        <span>{{ str_pad($group->member->count(), 2, '0', STR_PAD_LEFT) }}</span>
-                                    </p>
-                                </div>
+                                <div
+                                    class="h-8 flex items-center justify-center text-sm font-semibold bg-blue-50 text-gray-700">
+                                    25
+                                    000</div>
                             </div>
-                            <div
-                                class="h-8 flex items-center justify-center text-sm font-semibold bg-blue-50 text-gray-700">
-                                25
-                                000</div>
-                        </div>
-                    @endforeach
-                </div>
-
-                <div class="flex justify-start h-full ">
-                    <!-- Grid Table format hidden for mobile screens -->
-                    <div id="centersGridTable"
-                        class="w-full max-h-[calc(100vh-400px)] hidden lg:block p-0  overflow-y-auto">
-                        <div class="min-w-full ">
-                            <table class="w-full min-w-max">
-                                <thead class="w-full text-gray-700 text-xs font-light bg-gray-100 sticky top-0">
-                                    <tr class="uppercase w-full">
-                                        <th class="py-2 text-center">#</th>
-                                        <th class="py-2 text-left">Group Name</th>
-                                        <th class="py-2 text-left">Members</th>
-                                        <th class="py-2 text-left">Total Received </th>
-                                        <th class="py-2 text-left">Center</th>
-                                        <th class="py-2 text-center">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="text-gray-800 text-xs font-light bg-white">
-                                    @foreach ($center_details->group as $group)
-                                        <tr class="border-b border-gray-200 hover:bg-sky-100 cursor-pointer rounded-lg  view-details"
-                                            data-group-id={{ str_pad($group->id, 3, '0', STR_PAD_LEFT) }}
-                                            data-group-name="{{ capitalizeEachWord($group->group_name) }}"
-                                            data-members="{{ str_pad($group->member->count(), 2, '0', STR_PAD_LEFT) }}"
-                                            data-received="40000"
-                                            data-center="{{ capitalizeFirstLetter($center_details->center_name) }}"
-                                            data-center-manager="{{ capitalizeEachWord($center_details->manager_name) }}"
-                                            data-member='@json($group->member)'>
-                                            <td class="py-2 text-center">{{ str_pad($group->id, 3, '0', STR_PAD_LEFT) }}
-                                            </td>
-                                            <td class="py-2 text-left">{{ capitalizeEachWord($group->group_name) }}</td>
-                                            <td class="py-2 text-left">
-                                                {{ str_pad($group->member->count(), 2, '0', STR_PAD_LEFT) }}
-                                            </td>
-                                            <td class="py-2 text-left">400000 </td>
-                                            <td class="py-2 text-left">
-                                                {{ capitalizeFirstLetter($center_details->center_name) }}
-                                            </td>
-                                            <td class="py-2 text-center flex justify-center items-center gap-1">
-                                                <a href="{{ url('/groupSummary/' . $group->id) }}"
-                                                    class="border rounded hover:bg-green-500">
-                                                    <img src="{{ asset('assets/icons/Eye.svg') }}" alt="Eye"
-                                                        class="h-3 w-3 m-1">
-                                                </a>
-                                                {{-- <a href="#" class="border rounded hover:bg-red-500">
+                        @endforeach
+                    </div>
+                @endif
+                @if (Auth::user()->user_role->groups > 0)
+                    <div class="flex justify-start h-full ">
+                        <!-- Grid Table format hidden for mobile screens -->
+                        <div id="centersGridTable"
+                            class="w-full max-h-[calc(100vh-400px)] hidden lg:block p-0  overflow-y-auto">
+                            <div class="min-w-full ">
+                                <table class="w-full min-w-max">
+                                    <thead class="w-full text-gray-700 text-xs font-light bg-gray-100 sticky top-0">
+                                        <tr class="uppercase w-full">
+                                            <th class="py-2 text-center">#</th>
+                                            <th class="py-2 text-left">Group Name</th>
+                                            <th class="py-2 text-left">Members</th>
+                                            <th class="py-2 text-left">Total Received </th>
+                                            <th class="py-2 text-left">Center</th>
+                                            <th class="py-2 text-center">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="text-gray-800 text-xs font-light bg-white">
+                                        @foreach ($center_details->group as $group)
+                                            <tr class="border-b border-gray-200 hover:bg-sky-100 cursor-pointer rounded-lg  view-details"
+                                                data-group-id={{ str_pad($group->id, 3, '0', STR_PAD_LEFT) }}
+                                                data-group-name="{{ capitalizeEachWord($group->group_name) }}"
+                                                data-members="{{ str_pad($group->member->count(), 2, '0', STR_PAD_LEFT) }}"
+                                                data-received="40000"
+                                                data-center="{{ capitalizeFirstLetter($center_details->center_name) }}"
+                                                data-center-manager="{{ capitalizeEachWord($center_details->manager_name) }}"
+                                                data-member='@json($group->member)'>
+                                                <td class="py-2 text-center">
+                                                    {{ str_pad($group->id, 3, '0', STR_PAD_LEFT) }}
+                                                </td>
+                                                <td class="py-2 text-left">{{ capitalizeEachWord($group->group_name) }}
+                                                </td>
+                                                <td class="py-2 text-left">
+                                                    {{ str_pad($group->member->count(), 2, '0', STR_PAD_LEFT) }}
+                                                </td>
+                                                <td class="py-2 text-left">400000 </td>
+                                                <td class="py-2 text-left">
+                                                    {{ capitalizeFirstLetter($center_details->center_name) }}
+                                                </td>
+                                                <td class="py-2 text-center flex justify-center items-center gap-1">
+                                                    <a href="{{ url('/groupSummary/' . $group->id) }}"
+                                                        class="border rounded hover:bg-green-500">
+                                                        <img src="{{ asset('assets/icons/Eye.svg') }}" alt="Eye"
+                                                            class="h-3 w-3 m-1">
+                                                    </a>
+                                                    {{-- <a href="#" class="border rounded hover:bg-red-500">
                                                     <img src="{{ asset('assets/icons/Trash.svg') }}" alt="Pencil"
                                                         class="h-3 w-3 m-1">
                                                 </a> --}}
-                                                <a href="#" class="border rounded hover:bg-sky-500">
-                                                    <img src="{{ asset('assets/icons/ArrowLineDown.svg') }}"
-                                                        alt="Pencil" class="h-3 w-3 m-1">
-                                                </a>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
+                                                    <a href="#" class="border rounded hover:bg-sky-500">
+                                                        <img src="{{ asset('assets/icons/ArrowLineDown.svg') }}"
+                                                            alt="Pencil" class="h-3 w-3 m-1">
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
+
                     </div>
 
-                </div>
-                <div class="hidden mt-4 mx-4 lg:flex justify-between items-center text-xs text-gray-500">
-                    <span>1-10 of 87</span>
-                    <div class="flex justify-center items-center">
-                        <div class="pr-8">
-                            <select class="rounded bg-sky-50">
-                                <option>10</option>
-                                <option>20</option>
-                                <option>50</option>
-                            </select>
-                            <span>Rows per page</span>
+                    <div class="hidden mt-4 mx-4 lg:flex justify-between items-center text-xs text-gray-500">
+                        <span>1-10 of 87</span>
+                        <div class="flex justify-center items-center">
+                            <div class="pr-8">
+                                <select class="rounded bg-sky-50">
+                                    <option>10</option>
+                                    <option>20</option>
+                                    <option>50</option>
+                                </select>
+                                <span>Rows per page</span>
+                            </div>
+                            <button class="px-1 py-1 bg-gray-200 rounded hover:bg-sky-200">
+                                <img src="{{ asset('assets/icons/CaretLeft.svg') }}" alt="Dashboard Icon"
+                                    class="h-3 w-3">
+                            </button>
+                            <span class="px-2 text-xs">1/15</span>
+                            <button class="px-1 py-1 bg-gray-200 rounded hover:bg-sky-200">
+                                <img src="{{ asset('assets/icons/CaretRight.svg') }}" alt="Dashboard Icon"
+                                    class="h-3 w-3">
+                            </button>
                         </div>
-                        <button class="px-1 py-1 bg-gray-200 rounded hover:bg-sky-200">
-                            <img src="{{ asset('assets/icons/CaretLeft.svg') }}" alt="Dashboard Icon" class="h-3 w-3">
-                        </button>
-                        <span class="px-2 text-xs">1/15</span>
-                        <button class="px-1 py-1 bg-gray-200 rounded hover:bg-sky-200">
-                            <img src="{{ asset('assets/icons/CaretRight.svg') }}" alt="Dashboard Icon" class="h-3 w-3">
-                        </button>
                     </div>
-                </div>
+                @endif
             </div>
         </div>
 
@@ -588,6 +598,59 @@
 
                 // Ensure hover color overrides the background
                 row.classList.add('hover:bg-sky-100');
+            });
+            document.querySelectorAll('.view-details').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const row = button.closest('tr');
+                    const RowDetails = document.getElementById('RowDetails');
+                    const firstColumn = document.getElementById('firstColumn');
+
+                    RowDetails.classList.remove('hidden');
+                    firstColumn.classList.remove('lg:w-full');
+                    firstColumn.classList.add('lg:w-8/12');
+                    RowDetails.classList.add('lg:flex');
+
+                    const groupName = row.getAttribute('data-group-name');
+                    const groupId = row.getAttribute('data-group-id');
+                    const members = row.getAttribute('data-members');
+                    const received = row.getAttribute('data-received');
+                    const center = row.getAttribute('data-center');
+                    const center_manager = row.getAttribute('data-center-manager');
+                    document.getElementById('groupNameSlideBar').textContent =
+                        groupName;
+                    document.getElementById('CmanagerSlideBar').textContent =
+                        center_manager;
+                    document.getElementById('GcenterSlideBar').textContent = center;
+                    document.getElementById('GmembersSlideBar').textContent = members;
+                    document.getElementById('GreceivedSlideBar').textContent = received;
+                    const membersArray = JSON.parse(row.getAttribute('data-member'));
+                    console.log(membersArray);
+                    const memberList = document.getElementById('memberList');
+                    memberList.innerHTML = ''; // Clear existing
+
+                    membersArray.forEach(member => {
+                        const groupId = String(member.id).padStart(2, '0');
+
+                        const html = `
+        <div class="flex justify-between items-center bg-sky-50 shadow-sm border rounded-lg">
+                        <div class="flex flex-col p-2">
+                            <span class="text-xs font-medium text-gray-600 ">${member.full_name}</span>
+                            <span class="text-xs font-normal text-gray-600 ">${member.nic_number}</span>
+                        </div>
+                        <span class="text-xs font-medium text-gray-800 bg-gray-200 p-4 px-8 rounded-lg">5820145/=</span>
+                        <div class="font-medium text-gray-800 px-2 text-xs flex space-x-1">
+                            <a href="/groupSummary/${groupId}" class="border rounded hover:bg-green-500">
+                                <img src="{{ asset('assets/icons/Eye.svg') }}" alt="Eye" class="h-3 w-3 m-1">
+                            </a>
+
+                        </div>
+                    </div>
+    `;
+                        memberList.insertAdjacentHTML('beforeend', html);
+                    });
+
+                });
             });
         });
 
@@ -715,84 +778,27 @@
             });
 
             // Create Group
-            document.getElementById('createGroup').addEventListener('click', function(e) {
-                e.preventDefault();
-                if (!document.getElementById('groupBranch').value || !document.getElementById('groupCenter')
-                    .value || !document.getElementById('groupName').value) {
-                    alert("All fields marked with * are required.");
-                    return;
-                }
-                if (selectedMembers.length < 3 || selectedMembers.length > 6) {
-                    alert("A group must have between 3 and 6 members.");
-                    return;
-                }
-                alert("Group created successfully with " + selectedMembers.length + " members!");
-                document.getElementById('addGroupModal').classList.add('hidden');
-                document.getElementById('addGroupForm').reset();
-                selectedMembers = [];
-                document.getElementById('selectedMembers').textContent = 'No members selected';
-            });
-
-            // Row Details
-            document.addEventListener('DOMContentLoaded', function() {
-                document.querySelectorAll('.view-details').forEach(button => {
-                    button.addEventListener('click', (e) => {
-                        console.log(test);
-                        e.preventDefault();
-                        const row = button.closest('tr');
-                        const RowDetails = document.getElementById('RowDetails');
-                        const firstColumn = document.getElementById('firstColumn');
-
-                        RowDetails.classList.remove('hidden');
-                        firstColumn.classList.remove('lg:w-full');
-                        firstColumn.classList.add('lg:w-8/12');
-                        RowDetails.classList.add('lg:flex');
-
-                        const groupName = row.getAttribute('data-group-name');
-                        const members = row.getAttribute('data-members');
-                        const received = row.getAttribute('data-received');
-                        const center = row.getAttribute('data-center');
-                        const center_manager = row.getAttribute('data-center-manager');
-
-                        document.getElementById('groupNameSlideBar').textContent =
-                            groupName;
-                        document.getElementById('CmanagerSlideBar').textContent =
-                            center_manager;
-                        document.getElementById('GcenterSlideBar').textContent = center;
-                        document.getElementById('GmembersSlideBar').textContent = members;
-                        document.getElementById('GreceivedSlideBar').textContent = received;
-                        const membersArray = JSON.parse(row.getAttribute('data-member'));
-                        console.log(membersArray);
-                        const memberList = document.getElementById('memberList');
-                        memberList.innerHTML = ''; // Clear existing
-
-                        membersArray.forEach(member => {
-                            const groupId = String(member.id).padStart(2, '0');
-
-                            const html = `
-        <div class="flex justify-between items-center bg-sky-50 shadow-sm border rounded-lg">
-                        <div class="flex flex-col p-2">
-                            <span class="text-xs font-medium text-gray-600 ">${member.full_name}</span>
-                            <span class="text-xs font-normal text-gray-600 ">${member.nic_number}</span>
-                        </div>
-                        <span class="text-xs font-medium text-gray-800 bg-gray-200 p-4 px-8 rounded-lg">5820145/=</span>
-                        <div class="font-medium text-gray-800 px-2 text-xs flex space-x-1">
-                            <a href="#" class="border rounded hover:bg-green-500">
-                                <img src="{{ asset('assets/icons/Eye.svg') }}" alt="Eye" class="h-3 w-3 m-1">
-                            </a>
-                            /* <a href="#" class="border rounded hover:bg-red-500">
-                                <img src="{{ asset('assets/icons/Trash.svg') }}" alt="Pencil" class="h-3 w-3 m-1">
-                            </a> */
-                        </div>
-                    </div>
-    `;
-                            memberList.insertAdjacentHTML('beforeend', html);
-                        });
-
-                    });
+            if (document.getElementById('createGroup')) {
+                document.getElementById('createGroup').addEventListener('click', function(e) {
+                    e.preventDefault();
+                    if (!document.getElementById('groupBranch').value || !document.getElementById(
+                            'groupCenter')
+                        .value || !document.getElementById('groupName').value) {
+                        alert("All fields marked with * are required.");
+                        return;
+                    }
+                    if (selectedMembers.length < 3 || selectedMembers.length > 6) {
+                        alert("A group must have between 3 and 6 members.");
+                        return;
+                    }
+                    alert("Group created successfully with " + selectedMembers.length + " members!");
+                    document.getElementById('addGroupModal').classList.add('hidden');
+                    document.getElementById('addGroupForm').reset();
+                    selectedMembers = [];
+                    document.getElementById('selectedMembers').textContent = 'No members selected';
                 });
+            };
 
-            });
 
             // Helper function
             function hideAllSecondColumns() {
@@ -830,19 +836,21 @@
         const deleteModal = document.getElementById('deleteModal');
         const cancelDelete = document.getElementById('cancelDelete');
         const confirmDelete = document.getElementById('confirmDelete');
-
-        editBtn.addEventListener('click', () => {
-            document.querySelectorAll('.view-mode').forEach(el => el.classList.add('hidden'));
-            document.querySelectorAll('.edit-mode').forEach(el => el.classList.remove('hidden'));
-            editBtn.classList.add('hidden');
-            saveBtn.classList.remove('hidden');
-            saveBtn.classList.add('flex');
-        });
-        deleteBtn.addEventListener('click', () => {
-            deleteModal.classList.remove('hidden');
-            deleteModal.classList.add('flex');
-        });
-
+        if (editBtn) {
+            editBtn.addEventListener('click', () => {
+                document.querySelectorAll('.view-mode').forEach(el => el.classList.add('hidden'));
+                document.querySelectorAll('.edit-mode').forEach(el => el.classList.remove('hidden'));
+                editBtn.classList.add('hidden');
+                saveBtn.classList.remove('hidden');
+                saveBtn.classList.add('flex');
+            });
+        };
+        if (deleteBtn) {
+            deleteBtn.addEventListener('click', () => {
+                deleteModal.classList.remove('hidden');
+                deleteModal.classList.add('flex');
+            });
+        };
         cancelDelete.addEventListener('click', () => {
             deleteModal.classList.add('hidden');
         });

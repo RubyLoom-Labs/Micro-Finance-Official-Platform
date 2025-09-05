@@ -278,13 +278,14 @@
                         <div class="flex w-full lg:w-1/3 justify-between lg:justify-end items-end space-x-2 pt-4 ">
                             <div class="flex flex-row lg:space-x-2 bg-white lg:text-xs w-full justify-end">
                                 <!-- Edit -->
-                                <button id="editBtn" type="button"
-                                    class="bg-blue-600 text-white p-1 lg:p-2 rounded-lg hover:bg-blue-700 flex items-center justify-center px-6 w-1/2 lg:w-28 mr-2 lg:mr-0">
-                                    <img src="{{ asset('assets/icons/PencilSimpleWhite.svg') }}" alt="Edit"
-                                        class="h-3 w-3 mr-2">
-                                    <span>Edit</span>
-                                </button>
-
+                                @if (Auth::user()->user_role->groups == 2 || Auth::user()->user_role->groups == 3)
+                                    <button id="editBtn" type="button"
+                                        class="bg-blue-600 text-white p-1 lg:p-2 rounded-lg hover:bg-blue-700 flex items-center justify-center px-6 w-1/2 lg:w-28 mr-2 lg:mr-0">
+                                        <img src="{{ asset('assets/icons/PencilSimpleWhite.svg') }}" alt="Edit"
+                                            class="h-3 w-3 mr-2">
+                                        <span>Edit</span>
+                                    </button>
+                                @endif
                                 <!-- Save -->
                                 <button id="saveBtn" type="submit"
                                     class="bg-green-600 text-white p-1 lg:p-2 rounded-lg hover:bg-green-700 hidden  items-center justify-center px-6 w-1/2 lg:w-28  mr-2 lg:mr-0">
@@ -294,12 +295,14 @@
                                 </button>
 
                                 <!-- Delete -->
-                                <button id="deleteBtn" type="button"
-                                    class="bg-red-600 text-white p-1 lg:p-2 rounded-lg hover:bg-red-700 flex items-center justify-center px-4 w-1/2 lg:w-28">
-                                    <img src="{{ asset('assets/icons/TrashWhite.svg') }}" alt="Delete"
-                                        class="h-3 w-3 mr-2">
-                                    <span>Delete</span>
-                                </button>
+                                @if (Auth::user()->user_role->groups == 3)
+                                    <button id="deleteBtn" type="button"
+                                        class="bg-red-600 text-white p-1 lg:p-2 rounded-lg hover:bg-red-700 flex items-center justify-center px-4 w-1/2 lg:w-28">
+                                        <img src="{{ asset('assets/icons/TrashWhite.svg') }}" alt="Delete"
+                                            class="h-3 w-3 mr-2">
+                                        <span>Delete</span>
+                                    </button>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -352,132 +355,134 @@
                         @endif
                     </div>
                 </div>
+                @if (Auth::user()->user_role->members > 0)
+                    <p class="text-center text-xs my-2 text-gray-400 lg:hidden">Total members
+                        {{ str_pad($group_details->member->count(), 2, '0', STR_PAD_LEFT) }}</p>
 
-                <p class="text-center text-xs my-2 text-gray-400 lg:hidden">Total members
-                    {{ str_pad($group_details->member->count(), 2, '0', STR_PAD_LEFT) }}</p>
+                    <div id="membersGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:hidden gap-4 p-2">
+                        @foreach ($group_details->member as $member)
+                            <a href="{{ url('/memberSummery/' . $member->id) }}" class="block">
+                                <div
+                                    class="rounded-lg shadow-sm flex flex-col justify-between w-full bg-gray-100 border hover:bg-gray-200">
+                                    <div class=" py-2 px-4 flex flex-row justify-between space-y-1">
+                                        <div class="text-xs text-gray-600 text-left">
+                                            <p class="text-sm font-bold  text-gray-700">
+                                                {{ capitalizeEachWord($member->full_name) }} <span> -
+                                                    {{ capitalizeFirstLetter($group_details->center->center_name) }}
+                                                </span>
+                                            </p>
+                                            <p class="text-xs font- text-gray-400">{{ $member->nic_number }} </p>
+                                        </div>
 
-                <div id="membersGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:hidden gap-4 p-2">
-                    @foreach ($group_details->member as $member)
-                        <a href="{{ url('/memberSummery/' . $member->id) }}" class="block">
-                            <div
-                                class="rounded-lg shadow-sm flex flex-col justify-between w-full bg-gray-100 border hover:bg-gray-200">
-                                <div class=" py-2 px-4 flex flex-row justify-between space-y-1">
-                                    <div class="text-xs text-gray-600 text-left">
-                                        <p class="text-sm font-bold  text-gray-700">
-                                            {{ capitalizeEachWord($member->full_name) }} <span> -
-                                                {{ capitalizeFirstLetter($group_details->center->center_name) }} </span>
-                                        </p>
-                                        <p class="text-xs font- text-gray-400">{{ $member->nic_number }} </p>
-                                    </div>
-
-                                    <div class="text-xs flex items-center space-x-1 text-gray-700">
-                                        <p class="text-sm font-bold  text-gray-700">11515155</p>
+                                        <div class="text-xs flex items-center space-x-1 text-gray-700">
+                                            <p class="text-sm font-bold  text-gray-700">11515155</p>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </a>
-                    @endforeach
-                </div>
-                <!-- Centers Grid card format hidden for lg screens -->
-
-
-                <div class="flex justify-start h-full ">
-                    <!-- Grid Table format hidden for mobile screens -->
-                    <div id="membersGridTable"
-                        class="w-full max-h-[calc(100vh-400px)] hidden lg:block p-0  overflow-y-auto">
-                        <div class="min-w-full ">
-                            <table class="w-full min-w-max">
-                                <thead class="w-full text-gray-700 text-xs font-light bg-gray-100 sticky top-0">
-                                    <tr class="uppercase w-full">
-                                        <th class="py-2 text-center">#</th>
-                                        <th class="py-2 text-left">Name</th>
-                                        <th class="py-2 text-left">Status</th>
-                                        <th class="py-2 text-left">Center</th>
-                                        <th class="py-2 text-left">NIC </th>
-                                        <th class="py-2 text-left">Loan Balance</th>
-                                        <th class="py-2 text-center">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="text-gray-800 text-xs font-light bg-white">
-                                    <!-- AROW -->
-                                    @foreach ($group_details->member as $member)
-                                        <tr class="border-b border-gray-200 hover:bg-sky-100 cursor-pointer rounded-lg  view-details"
-                                            data-member-id={{ str_pad($member->id, 3, '0', STR_PAD_LEFT) }}
-                                            data-member-name='{{ capitalizeEachWord($member->full_name) }}'
-                                            data-center-name='{{ capitalizeFirstLetter($group_details->center->center_name) }}'
-                                            data-group-name='{{ capitalizeEachWord($group_details->group_name) }}'
-                                            data-branch-name='{{ capitalizeFirstLetter($group_details->center->branch->branch_name) }}'
-                                            data-received="40000" data-member-object='@json($member)'>
-                                            <td class="py-2 text-center">
-                                                {{ str_pad($member->id, 3, '0', STR_PAD_LEFT) }}
-                        </div>
-                        </td>
-                        <td class="py-2 text-left">{{ capitalizeEachWord($member->full_name) }}</td>
-                        @if ($member->status == 'ACTIVE')
-                            <td id="activeMemberStatus" class="items-center">
-                                <span class="bg-green-400 p-0.5 px-1 rounded text-black text-xs">Active</span>
-                            </td>
-                        @else
-                            <td id="inactiveMemberStatus" class="items-center ">
-                                <span class="bg-red-400 p-0.5 px-1 rounded text-black text-xs">Inactive</span>
-                            </td>
-                        @endif
-
-
-                        <td class="py-2 text-left">{{ capitalizeFirstLetter($group_details->center->center_name) }}</td>
-                        <td class="py-2 text-left"> {{ $member->nic_number }}</td>
-                        @php
-                            $total_paid_amount = collect(
-                                optional($member->loan->firstWhere('status', 'UNCOMPLETED'))->installment,
-                            )->sum('amount');
-                            $total_balance =
-                                optional($member->loan->firstWhere('status', 'UNCOMPLETED'))->loan_amount +
-                                optional($member->loan->firstWhere('status', 'UNCOMPLETED'))->interest -
-                                $total_paid_amount;
-                        @endphp
-                        <td class="py-2 text-left">Rs. {{ number_format($total_balance, 2) }}</td>
-                        <td class="py-2 text-center flex justify-center items-center gap-1">
-                            <a href="{{ url('/memberSummery/' . $member->id) }}"
-                                class="border rounded hover:bg-green-500">
-                                <img src="{{ asset('assets/icons/Eye.svg') }}" alt="Eye" class="h-3 w-3 m-1">
                             </a>
-                            <a href="#" class="border rounded hover:bg-sky-500">
-                                <img src="{{ asset('assets/icons/PencilSimple.svg') }}" alt="Pencil"
-                                    class="h-3 w-3 m-1">
-                            </a>
-                            <a href="#" class="border rounded hover:bg-lime-500">
-                                <img src="{{ asset('assets/icons/Money.svg') }}" alt="Pencil" class="h-3 w-3 m-1">
-                            </a>
-                        </td>
-                        </tr>
                         @endforeach
-                        </tbody>
-                        </table>
                     </div>
-                </div>
+                    <!-- Centers Grid card format hidden for lg screens -->
 
-            </div>
-            <div class="hidden mt-4 mx-4 lg:flex justify-between items-center text-xs text-gray-500">
-                <span>1-10 of 87</span>
-                <div class="flex justify-center items-center">
-                    <div class="pr-8">
-                        <select class="rounded bg-sky-50">
-                            <option>10</option>
-                            <option>20</option>
-                            <option>50</option>
-                        </select>
-                        <span>Rows per page</span>
-                    </div>
-                    <button class="px-1 py-1 bg-gray-200 rounded hover:bg-sky-200">
-                        <img src="{{ asset('assets/icons/CaretLeft.svg') }}" alt="Dashboard Icon" class="h-3 w-3">
-                    </button>
-                    <span class="px-2 text-xs">1/15</span>
-                    <button class="px-1 py-1 bg-gray-200 rounded hover:bg-sky-200">
-                        <img src="{{ asset('assets/icons/CaretRight.svg') }}" alt="Dashboard Icon" class="h-3 w-3">
-                    </button>
-                </div>
+
+                    <div class="flex justify-start h-full ">
+                        <!-- Grid Table format hidden for mobile screens -->
+                        <div id="membersGridTable"
+                            class="w-full max-h-[calc(100vh-400px)] hidden lg:block p-0  overflow-y-auto">
+                            <div class="min-w-full ">
+                                <table class="w-full min-w-max">
+                                    <thead class="w-full text-gray-700 text-xs font-light bg-gray-100 sticky top-0">
+                                        <tr class="uppercase w-full">
+                                            <th class="py-2 text-center">#</th>
+                                            <th class="py-2 text-left">Name</th>
+                                            <th class="py-2 text-left">Status</th>
+                                            <th class="py-2 text-left">Center</th>
+                                            <th class="py-2 text-left">NIC </th>
+                                            <th class="py-2 text-left">Loan Balance</th>
+                                            <th class="py-2 text-center">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="text-gray-800 text-xs font-light bg-white">
+                                        <!-- AROW -->
+                                        @foreach ($group_details->member as $member)
+                                            <tr class="border-b border-gray-200 hover:bg-sky-100 cursor-pointer rounded-lg  view-details"
+                                                data-member-id={{ str_pad($member->id, 3, '0', STR_PAD_LEFT) }}
+                                                data-member-name='{{ capitalizeEachWord($member->full_name) }}'
+                                                data-center-name='{{ capitalizeFirstLetter($group_details->center->center_name) }}'
+                                                data-group-name='{{ capitalizeEachWord($group_details->group_name) }}'
+                                                data-branch-name='{{ capitalizeFirstLetter($group_details->center->branch->branch_name) }}'
+                                                data-received="40000" data-member-object='@json($member)'>
+                                                <td class="py-2 text-center">
+                                                    {{ str_pad($member->id, 3, '0', STR_PAD_LEFT) }}
+                            </div>
+                            </td>
+                            <td class="py-2 text-left">{{ capitalizeEachWord($member->full_name) }}</td>
+                            @if ($member->status == 'ACTIVE')
+                                <td id="activeMemberStatus" class="items-center">
+                                    <span class="bg-green-400 p-0.5 px-1 rounded text-black text-xs">Active</span>
+                                </td>
+                            @else
+                                <td id="inactiveMemberStatus" class="items-center ">
+                                    <span class="bg-red-400 p-0.5 px-1 rounded text-black text-xs">Inactive</span>
+                                </td>
+                            @endif
+
+
+                            <td class="py-2 text-left">{{ capitalizeFirstLetter($group_details->center->center_name) }}
+                            </td>
+                            <td class="py-2 text-left"> {{ $member->nic_number }}</td>
+                            @php
+                                $total_paid_amount = collect(
+                                    optional($member->loan->firstWhere('status', 'UNCOMPLETED'))->installment,
+                                )->sum('amount');
+                                $total_balance =
+                                    optional($member->loan->firstWhere('status', 'UNCOMPLETED'))->loan_amount +
+                                    optional($member->loan->firstWhere('status', 'UNCOMPLETED'))->interest -
+                                    $total_paid_amount;
+                            @endphp
+                            <td class="py-2 text-left">Rs. {{ number_format($total_balance, 2) }}</td>
+                            <td class="py-2 text-center flex justify-center items-center gap-1">
+                                <a href="{{ url('/memberSummery/' . $member->id) }}"
+                                    class="border rounded hover:bg-green-500">
+                                    <img src="{{ asset('assets/icons/Eye.svg') }}" alt="Eye" class="h-3 w-3 m-1">
+                                </a>
+                                <a href="#" class="border rounded hover:bg-sky-500">
+                                    <img src="{{ asset('assets/icons/PencilSimple.svg') }}" alt="Pencil"
+                                        class="h-3 w-3 m-1">
+                                </a>
+                                <a href="#" class="border rounded hover:bg-lime-500">
+                                    <img src="{{ asset('assets/icons/Money.svg') }}" alt="Pencil" class="h-3 w-3 m-1">
+                                </a>
+                            </td>
+                            </tr>
+                @endforeach
+                </tbody>
+                </table>
             </div>
         </div>
+        @endif
+    </div>
+    <div class="hidden mt-4 mx-4 lg:flex justify-between items-center text-xs text-gray-500">
+        <span>1-10 of 87</span>
+        <div class="flex justify-center items-center">
+            <div class="pr-8">
+                <select class="rounded bg-sky-50">
+                    <option>10</option>
+                    <option>20</option>
+                    <option>50</option>
+                </select>
+                <span>Rows per page</span>
+            </div>
+            <button class="px-1 py-1 bg-gray-200 rounded hover:bg-sky-200">
+                <img src="{{ asset('assets/icons/CaretLeft.svg') }}" alt="Dashboard Icon" class="h-3 w-3">
+            </button>
+            <span class="px-2 text-xs">1/15</span>
+            <button class="px-1 py-1 bg-gray-200 rounded hover:bg-sky-200">
+                <img src="{{ asset('assets/icons/CaretRight.svg') }}" alt="Dashboard Icon" class="h-3 w-3">
+            </button>
+        </div>
+    </div>
+    </div>
     </div>
 
     <!-- Second Column: Row Details -->
@@ -626,48 +631,49 @@
         const deleteModal = document.getElementById('deleteModal');
         const cancelDelete = document.getElementById('cancelDelete');
         const confirmDelete = document.getElementById('confirmDelete');
-
-        editBtn.addEventListener('click', () => {
-            document.querySelectorAll('.view-mode').forEach(el => el.classList.add('hidden'));
-            document.querySelectorAll('.edit-mode').forEach(el => el.classList.remove('hidden'));
-            editBtn.classList.add('hidden');
-            saveBtn.classList.remove('hidden');
-            saveBtn.classList.add('flex');
-        });
-
-
-        deleteBtn.addEventListener('click', () => {
-            deleteModal.classList.remove('hidden');
-            deleteModal.classList.add('flex');
-        });
-
+        if (editBtn) {
+            editBtn.addEventListener('click', () => {
+                document.querySelectorAll('.view-mode').forEach(el => el.classList.add('hidden'));
+                document.querySelectorAll('.edit-mode').forEach(el => el.classList.remove('hidden'));
+                editBtn.classList.add('hidden');
+                saveBtn.classList.remove('hidden');
+                saveBtn.classList.add('flex');
+            });
+        };
+        if (deleteBtn) {
+            deleteBtn.addEventListener('click', () => {
+                deleteModal.classList.remove('hidden');
+                deleteModal.classList.add('flex');
+            });
+        };
         cancelDelete.addEventListener('click', () => {
             deleteModal.classList.add('hidden');
         });
         const groupId = document.getElementById('group_id_span').innerText.trim();
-        confirmDelete.addEventListener(
-            'click', () => {
-                fetch(`/groups/delete/${groupId}`, {
-                        method: 'DELETE',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                        }
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        deleteModal.classList.add('hidden');
-                        alert(data.message);
-                        const viewCenterBladeUrl = "{{ route('centers.viewblade') }}";
-                        window.location.href = viewCenterBladeUrl;
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert(error);
+        if (confirmDelete) {
+            confirmDelete.addEventListener(
+                'click', () => {
+                    fetch(`/groups/delete/${groupId}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            deleteModal.classList.add('hidden');
+                            alert(data.message);
+                            const viewCenterBladeUrl = "{{ route('centers.viewblade') }}";
+                            window.location.href = viewCenterBladeUrl;
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert(error);
 
-                    });
-            });
-
+                        });
+                });
+        };
         let select_member_id = '';
         // Row Summey
         document.querySelectorAll('.view-details').forEach(button => {
@@ -773,98 +779,109 @@
         let selectedMembers = [];
         document.addEventListener('DOMContentLoaded', function() {
             // Open Add Group Modal
-            document.getElementById('addMemberButton').addEventListener('click', function() {
-                document.getElementById('addNewMemberModal').classList.remove('hidden');
-                document.getElementById('addNewMemberModal').classList.add('flex');
-            });
+            if (document.getElementById('addMemberButton')) {
+                document.getElementById('addMemberButton').addEventListener('click', function() {
+                    document.getElementById('addNewMemberModal').classList.remove('hidden');
+                    document.getElementById('addNewMemberModal').classList.add('flex');
+                });
+            };
 
             // Add Existing Member Modal
-            document.getElementById('addExistingMember').addEventListener('click', function() {
-                document.getElementById('addExistingMemberModal').classList.remove('hidden');
-                document.getElementById('addExistingMemberModal').classList.add('flex');
-                renderExistingMembers();
-            });
+            if (document.getElementById('addExistingMember')) {
+                document.getElementById('addExistingMember').addEventListener('click', function() {
+                    document.getElementById('addExistingMemberModal').classList.remove('hidden');
+                    document.getElementById('addExistingMemberModal').classList.add('flex');
+                    renderExistingMembers();
+                });
+            };
+            if (document.getElementById('searchExistingMembers')) {
+                document.getElementById('searchExistingMembers').addEventListener('input', function() {
+                    const searchTerm = this.value.toLowerCase();
+                    renderExistingMembers(searchTerm);
+                });
+            };
+            if (document.getElementById('okExistingMember')) {
+                document.getElementById('okExistingMember').addEventListener('click', function() {
+                    const checkboxes = document.querySelectorAll(
+                        '#existingMembersList input[type="checkbox"]:checked');
+                    const newSelections = Array.from(checkboxes).map(cb => ({
+                        id: cb.value,
+                        name: cb.getAttribute('data-name'),
+                        nic: cb.getAttribute('data-nic'),
+                        type: 'existing'
+                    }));
 
-            document.getElementById('searchExistingMembers').addEventListener('input', function() {
-                const searchTerm = this.value.toLowerCase();
-                renderExistingMembers(searchTerm);
-            });
-
-            document.getElementById('okExistingMember').addEventListener('click', function() {
-                const checkboxes = document.querySelectorAll(
-                    '#existingMembersList input[type="checkbox"]:checked');
-                const newSelections = Array.from(checkboxes).map(cb => ({
-                    id: cb.value,
-                    name: cb.getAttribute('data-name'),
-                    nic: cb.getAttribute('data-nic'),
-                    type: 'existing'
-                }));
-
-                selectedMembers = [...selectedMembers, ...newSelections];
-                if (selectedMembers.length > 6) {
-                    selectedMembers = selectedMembers.slice(0, 6); // Limit to 6
-                    alert("Maximum 6 members allowed. Excess members removed.");
-                }
-                document.getElementById('selectedMembers').textContent = selectedMembers.map(m => m
-                        .name)
-                    .join(', ') || 'No members selected';
-                document.getElementById('addExistingMemberModal').classList.add('hidden');
-            });
-
-            document.getElementById('cancelExistingMember').addEventListener('click', function() {
-                document.getElementById('addExistingMemberModal').classList.add('hidden');
-            });
-
-            // Add New Member Modal
-            document.getElementById('addNewMember').addEventListener('click', function() {
-                document.getElementById('addNewMemberModal').classList.remove('hidden');
-                document.getElementById('addNewMemberModal').classList.add('flex');
-            });
-
-            document.getElementById('cancelNewMember').addEventListener('click', function() {
-                document.getElementById('addNewMemberModal').classList.add('hidden');
-            });
-
-            document.getElementById('createNewMember').addEventListener('click', function(e) {
-                e.preventDefault();
-                const newMember = {
-                    branch: document.getElementById('newMemberBranch').value,
-                    center: document.getElementById('newMemberCenter').value,
-                    group: document.getElementById('newMemberGroup').value,
-                    fullName: document.getElementById('newMemberFullName').value,
-                    mobile01: document.getElementById('newMemberMobile01').value,
-                    mobile02: document.getElementById('newMemberMobile02').value,
-                    address: document.getElementById('newMemberAddress').value,
-                    nic: document.getElementById('newMemberNIC').value,
-                    gender: document.querySelector('input[name="newMemberGender"]:checked')?.value,
-                    image: document.getElementById('newMemberImage').files[0],
-                    type: 'new'
-                };
-
-                if (!newMember.fullName || !newMember.image) {
-                    alert("Full Name and Image are required.");
-                    return;
-                }
-
-                selectedMembers.push(newMember);
-                if (selectedMembers.length > 6) {
-                    selectedMembers.pop();
-                    alert("Maximum 6 members allowed. This member was not added.");
-                } else {
+                    selectedMembers = [...selectedMembers, ...newSelections];
+                    if (selectedMembers.length > 6) {
+                        selectedMembers = selectedMembers.slice(0, 6); // Limit to 6
+                        alert("Maximum 6 members allowed. Excess members removed.");
+                    }
                     document.getElementById('selectedMembers').textContent = selectedMembers.map(m => m
-                        .fullName || m.name).join(', ') || 'No members selected';
-                }
-                document.getElementById('addNewMemberModal').classList.add('hidden');
-                document.getElementById('addNewMemberForm').reset();
-            });
+                            .name)
+                        .join(', ') || 'No members selected';
+                    document.getElementById('addExistingMemberModal').classList.add('hidden');
+                });
+            };
+            if (document.getElementById('cancelExistingMember')) {
+                document.getElementById('cancelExistingMember').addEventListener('click', function() {
+                    document.getElementById('addExistingMemberModal').classList.add('hidden');
+                });
+            };
+            // Add New Member Modal
+            if (document.getElementById('addNewMember')) {
+                document.getElementById('addNewMember').addEventListener('click', function() {
+                    document.getElementById('addNewMemberModal').classList.remove('hidden');
+                    document.getElementById('addNewMemberModal').classList.add('flex');
+                });
+            };
+            if (document.getElementById('cancelNewMember')) {
+                document.getElementById('cancelNewMember').addEventListener('click', function() {
+                    document.getElementById('addNewMemberModal').classList.add('hidden');
+                });
+            };
+            if (document.getElementById('createNewMember')) {
+                document.getElementById('createNewMember').addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const newMember = {
+                        branch: document.getElementById('newMemberBranch').value,
+                        center: document.getElementById('newMemberCenter').value,
+                        group: document.getElementById('newMemberGroup').value,
+                        fullName: document.getElementById('newMemberFullName').value,
+                        mobile01: document.getElementById('newMemberMobile01').value,
+                        mobile02: document.getElementById('newMemberMobile02').value,
+                        address: document.getElementById('newMemberAddress').value,
+                        nic: document.getElementById('newMemberNIC').value,
+                        gender: document.querySelector('input[name="newMemberGender"]:checked')?.value,
+                        image: document.getElementById('newMemberImage').files[0],
+                        type: 'new'
+                    };
 
+                    if (!newMember.fullName || !newMember.image) {
+                        alert("Full Name and Image are required.");
+                        return;
+                    }
+
+                    selectedMembers.push(newMember);
+                    if (selectedMembers.length > 6) {
+                        selectedMembers.pop();
+                        alert("Maximum 6 members allowed. This member was not added.");
+                    } else {
+                        document.getElementById('selectedMembers').textContent = selectedMembers.map(m => m
+                            .fullName || m.name).join(', ') || 'No members selected';
+                    }
+                    document.getElementById('addNewMemberModal').classList.add('hidden');
+                    document.getElementById('addNewMemberForm').reset();
+                });
+            };
             // Cancel Group Modal
-            document.getElementById('cancelMember').addEventListener('click', function() {
-                document.getElementById('addMemberModal').classList.add('hidden');
-                document.getElementById('addmemberForm').reset();
-                selectedMembers = [];
-                document.getElementById('selectedMembers').textContent = 'No members selected';
-            });
+            if (document.getElementById('cancelMember')) {
+                document.getElementById('cancelMember').addEventListener('click', function() {
+                    document.getElementById('addMemberModal').classList.add('hidden');
+                    document.getElementById('addmemberForm').reset();
+                    selectedMembers = [];
+                    document.getElementById('selectedMembers').textContent = 'No members selected';
+                });
+            };
 
             function renderExistingMembers(searchTerm = '') {
                 const list = document.getElementById('existingMembersList');

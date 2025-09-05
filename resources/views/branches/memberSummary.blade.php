@@ -425,21 +425,23 @@
                                 <div
                                     class="flex flex-col lg:flex-row  lg:space-col lg:space-x-2 space-y-2 lg:space-y-0 bg-white lg:text-xs w-full justify-end">
                                     <!-- Edit -->
-                                    @php
-                                        $isDisabled = $member_details->loan->contains('status', 'UNCOMPLETED');
-                                    @endphp
-                                    <button id="addLoanButton" @if ($isDisabled) disabled @endif
-                                        class="p-1 lg:p-1 px-6 lg:w-1/2 w-full lg:mr-0 rounded-lg flex items-center justify-center h-8
+                                    @if (Auth::user()->user_role->loans == 1)
+                                        @php
+                                            $isDisabled = $member_details->loan->contains('status', 'UNCOMPLETED');
+                                        @endphp
+                                        <button id="addLoanButton" @if ($isDisabled) disabled @endif
+                                            class="p-1 lg:p-1 px-6 lg:w-1/2 w-full lg:mr-0 rounded-lg flex items-center justify-center h-8
                                                              text-white {{ $isDisabled ? 'bg-blue-400 opacity-50 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700' }}">
-                                        <span>+</span>
-                                        <span class="ml-2 text-xs">Add Loan</span>
-                                    </button>
-                                    <!-- Edit -->
-                                    <button id="ViewPreviousLoan"
-                                        class="bg-blue-600 text-white p-1 lg:p-1 rounded-lg hover:bg-blue-700 flex items-center justify-center px-6 lg:w-1/2 w-full lg:mr-0 h-8">
-                                        <span></span>
-                                        <span class="ml-2 text-xs">View previous Loan</span>
-                                    </button>
+                                            <span>+</span>
+                                            <span class="ml-2 text-xs">Add Loan</span>
+                                        </button>
+                                        <!-- Edit -->
+                                        <button id="ViewPreviousLoan"
+                                            class="bg-blue-600 text-white p-1 lg:p-1 rounded-lg hover:bg-blue-700 flex items-center justify-center px-6 lg:w-1/2 w-full lg:mr-0 h-8">
+                                            <span></span>
+                                            <span class="ml-2 text-xs">View previous Loan</span>
+                                        </button>
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -860,7 +862,7 @@
                                                 </div>
                                             @endforeach
                                         @endif
-                                        @if ($installement->status == 'UNPAYED')
+                                        @if ($installement->status == 'UNPAYED' && Auth::user()->user_role->loans == 1)
                                             <form
                                                 action="{{ route('installments.updateInstallment', ['loanId' => $loan->id]) }}"
                                                 method="POST" enctype="multipart/form-data">
@@ -952,17 +954,18 @@
             // Customer Details edit and save functionality
             const editCustomerBtn = document.getElementById('editCustomerBtn');
             const saveCustomerBtn = document.getElementById('saveCustomerBtn');
+            if (editCustomerBtn) {
+                editCustomerBtn.addEventListener('click', () => {
+                    document.querySelectorAll('.view-mode-customer').forEach(el => el.classList.add(
+                        'hidden'));
+                    document.querySelectorAll('.edit-mode-customer').forEach(el => el.classList.remove(
+                        'hidden'));
+                    editCustomerBtn.classList.add('hidden');
+                    saveCustomerBtn.classList.remove('hidden');
+                    saveCustomerBtn.classList.add('flex');
+                });
 
-            editCustomerBtn.addEventListener('click', () => {
-                document.querySelectorAll('.view-mode-customer').forEach(el => el.classList.add('hidden'));
-                document.querySelectorAll('.edit-mode-customer').forEach(el => el.classList.remove(
-                    'hidden'));
-                editCustomerBtn.classList.add('hidden');
-                saveCustomerBtn.classList.remove('hidden');
-                saveCustomerBtn.classList.add('flex');
-            });
-
-
+            };
 
             // Helper function to hide all second columns
             function hideAllSecondColumns() {
@@ -986,37 +989,40 @@
             const deleteBtn = document.getElementById('deleteBtn');
             const cancelDelete = document.getElementById('cancelDelete');
             const confirmDelete = document.getElementById('confirmDelete');
-
-            deleteBtn.addEventListener('click', () => {
-                deleteModal.classList.remove('hidden');
-                deleteModal.classList.add('flex');
-            });
-            cancelDelete.addEventListener('click', () => {
-                deleteModal.classList.add('hidden');
-            });
-            const memberId = document.getElementById('member_id_span').innerText.trim();
-            confirmDelete.addEventListener(
-                'click', () => {
-                    fetch(`/members/delete/${memberId}`, {
-                            method: 'DELETE',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                            }
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            deleteModal.classList.add('hidden');
-                            alert(data.message);
-                            const viewCenterBladeUrl = "{{ route('centers.viewblade') }}";
-                            window.location.href = viewCenterBladeUrl;
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            alert("Something went wrong!");
-
-                        });
+            if (deleteBtn) {
+                deleteBtn.addEventListener('click', () => {
+                    deleteModal.classList.remove('hidden');
+                    deleteModal.classList.add('flex');
                 });
+
+                cancelDelete.addEventListener('click', () => {
+                    deleteModal.classList.add('hidden');
+                });
+                const memberId = document.getElementById('member_id_span').innerText.trim();
+                confirmDelete.addEventListener(
+                    'click', () => {
+                        fetch(`/members/delete/${memberId}`, {
+                                method: 'DELETE',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                        .content
+                                }
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                deleteModal.classList.add('hidden');
+                                alert(data.message);
+                                const viewCenterBladeUrl = "{{ route('centers.viewblade') }}";
+                                window.location.href = viewCenterBladeUrl;
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                alert("Something went wrong!");
+
+                            });
+                    });
+            };
             // Row Details click handler
             document.querySelectorAll('.view-details').forEach(button => {
                 button.addEventListener('click', (e) => {
@@ -1052,6 +1058,7 @@
                 });
             });
             const viewPreviousLoanBtn = document.getElementById('ViewPreviousLoan');
+            if(viewPreviousLoanBtn){
             viewPreviousLoanBtn.addEventListener('click', (e) => {
 
                 const RowDetails = document.getElementById('RowDetails');
@@ -1081,7 +1088,7 @@
                      document.getElementById('inactiveMemberStatus').classList.remove('hidden');
                  } */
             });
-
+        };
         });
 
         // Toggle Previous and Current Loan Details with mutual exclusivity
@@ -1176,6 +1183,7 @@
         });
 
         //Loan
+        if(document.getElementById('addLoanButton')){
         document.getElementById('addLoanButton').addEventListener('click', () => {
             if (window.innerWidth >= 1024) {
                 document.getElementById('addLoanModal').classList.remove('hidden');
@@ -1195,7 +1203,7 @@
                 document.getElementById('addLoanModal').classList.add('flex');
             }
         });
-
+    };
         document.getElementById('cancelLoan').addEventListener('click', () => {
             document.getElementById('addLoanModal').classList.add('hidden');
             document.getElementById('addLoanModal').classList.remove('flex');

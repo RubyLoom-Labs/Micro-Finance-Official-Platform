@@ -46,10 +46,10 @@
                                             'Dashboard',
                                             'Branch Creation',
                                             'User Accounts Creation ',
-                                            'User Roles Creation ',
+                                            'User Roles Creation ','Income', 'Payments', 'Reports','Loans','User Logs'
                                         ];
 
-                                        $modulesMultiple = ['Centers', 'Members', 'Income', 'Payments', 'Reports'];
+                                        $modulesMultiple = ['Centers', 'Groups','Members' ];
 
                                     @endphp
                                     @foreach ($modules as $module)
@@ -333,15 +333,18 @@
                     'dashboard',
                     'branch_creation',
                     'user_accounts_creation',
-                    'user_role_creation'
+                    'user_role_creation',
+                    'income',
+                    'payments',
+                    'reports',
+                    'user_logs',
+                    'loans'
                 ];
 
                 const multiLevelPermissions = [
                     'centers',
-                    'members',
-                    'income',
-                    'payments',
-                    'reports'
+                    'groups',
+                    'members'
                 ];
 
                 // Label maps

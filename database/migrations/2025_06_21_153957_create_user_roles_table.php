@@ -28,6 +28,10 @@ class CreateUserRolesTable extends Migration
     $table->unsignedTinyInteger('income')->default(0);
     $table->unsignedTinyInteger('payments')->default(0);
     $table->unsignedTinyInteger('reports')->default(0);
+        $table->unsignedTinyInteger('loans')->default(0);
+    $table->unsignedTinyInteger('user_logs')->default(0);
+    $table->unsignedTinyInteger('groups')->default(0);
+
     $table->enum('status', ['ACTIVE', 'INACTIVE'])->default('ACTIVE');
     $table->timestamps();
 });

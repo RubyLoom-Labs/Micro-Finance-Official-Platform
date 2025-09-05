@@ -50,11 +50,11 @@ Route::middleware(['auth'])->group(function () {
 
 
     //group route
-    Route::get('/groupSummary/{groupId}', [GroupController::class, 'viewGroupSummary'])->name('group.summary');
+    Route::get('/groupSummary/{groupId}', [GroupController::class, 'viewGroupSummary'])->middleware(['can:groups-view'])->name('group.summary');
     Route::get('/groups/{centerId}', [GroupController::class, 'getGroupsByCenter']);
-    Route::post('/group/create', [GroupController::class, 'createGroup'])->name('groups.creategroup');
-    Route::post('/groups/update/{groupId}', [GroupController::class, 'updateGroup'])->name('groups.updateGroup');
-    Route::delete('/groups/delete/{centerId}', [GroupController::class, 'deleteGroup']);
+    Route::post('/group/create', [GroupController::class, 'createGroup'])->middleware(['can:groups-edit'])->name('groups.creategroup');
+    Route::post('/groups/update/{groupId}', [GroupController::class, 'updateGroup'])->middleware(['can:groups-edit'])->name('groups.updateGroup');
+    Route::delete('/groups/delete/{centerId}', [GroupController::class, 'deleteGroup'])->middleware(['can:groups-delete']);
 
 
 
@@ -71,15 +71,15 @@ Route::middleware(['auth'])->group(function () {
 
 
     //loans routes
-    Route::post('/loans/create/{memberId}', [LoanController::class, 'createLoan'])->name('loans.createLoan');
+    Route::post('/loans/create/{memberId}', [LoanController::class, 'createLoan'])->middleware('can:loans')->name('loans.createLoan');
 
     //installments routes
-    Route::post('/installments/update/{loanId}', [InstallmentController::class, 'updateInstallment'])->name('installments.updateInstallment');
+    Route::post('/installments/update/{loanId}', [InstallmentController::class, 'updateInstallment'])->middleware('can:loans')->name('installments.updateInstallment');
 
     /*income*/
-    Route::get('/income', [CenterController::class, 'incomeView'])->name('centers.viewIncomeBlade');
-    Route::get('/collection',  [CenterController::class, 'collectionView'])->name('centers.viewCollectionBlade');
-    Route::get('/underpayment', [CenterController::class, 'underPaymentView'])->name('centers.viewUnderPaymentBlade');
+    Route::get('/income', [CenterController::class, 'incomeView'])->middleware('can:income')->name('centers.viewIncomeBlade');
+    Route::get('/collection',  [CenterController::class, 'collectionView'])->middleware('can:income')->name('centers.viewCollectionBlade');
+    Route::get('/underpayment', [CenterController::class, 'underPaymentView'])->middleware('can:income')->name('centers.viewUnderPaymentBlade');
 
     //user roles routes
     Route::get('/userRole', [UserRoleController::class, 'userRolesView'])->middleware(['can:create-user-roles']);
@@ -98,7 +98,7 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/userAccount/delete/{userId}', [UserController::class, 'deleteUser']);
 
     //logs
-    Route::get('/userLogs', [LogController::class, 'logsView'])->name('log.viewblade');
+    Route::get('/userLogs', [LogController::class, 'logsView'])->middleware(['can:user-logs'])->name('log.viewblade');
 
 
     /* Route::get('/recentlyAdded', function () {
@@ -122,12 +122,12 @@ Route::middleware(['auth'])->group(function () {
 
 
     /*Payments*/
-    Route::get('/payments', [LoanController::class, 'viewUncompletedLoans']);
-    Route::get('/pending', [LoanController::class, 'viewPendingLoans']);
-    Route::get('/nopaid', [LoanController::class, 'viewNoPaidLoans']);
-    Route::get('/paymentsSummery', function () {
+    Route::get('/payments', [LoanController::class, 'viewUncompletedLoans'])->middleware('can:payments');
+    Route::get('/pending', [LoanController::class, 'viewPendingLoans'])->middleware('can:payments');
+    Route::get('/nopaid', [LoanController::class, 'viewNoPaidLoans'])->middleware('can:payments');
+    /*  Route::get('/paymentsSummery', function () {
         return view('payments/paymentsSummery');
-    });
+    }); */
 
     /*Profile View*/
     Route::get('/profile', function () {
@@ -137,16 +137,16 @@ Route::middleware(['auth'])->group(function () {
     /*Reports*/
     Route::get('/loneIssue', function () {
         return view('reports/loneIssue');
-    });
+    })->middleware('can:reports');
     Route::get('/incomeReports', function () {
         return view('reports/incomeReports');
-    });
+    })->middleware('can:reports');
     Route::get('/pendingPaymentsReport', function () {
         return view('reports/pendingPaymentsReport');
-    });
+    })->middleware('can:reports');
     Route::get('/membersReport', function () {
         return view('reports/membersReport');
-    });
+    })->middleware('can:reports');
 
     /*Settings*/
 });
