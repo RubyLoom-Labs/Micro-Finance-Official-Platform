@@ -168,7 +168,7 @@
 
                 <!-------------TABLE------------------------------------------------------------------------------------------------------------>
                 <!-- Centers Grid Table format hidden for mobile screens -->
-                <div class="flex-1">
+                <div class="flex-1 hidden lg:block">
                     <div id="userTable" class="w-full overflow-y-auto border-t" style="max-height: calc(100vh - 200px);">
                         <div class="min-w-full">
                             <table class="w-full">
@@ -222,7 +222,7 @@
                     </div>
                 </div>
 
-                <div class="mt-4 mx-4 lg:flex justify-between items-center text-xs text-gray-500">
+                <div class="hidden mt-4 mx-4 lg:flex justify-between items-center text-xs text-gray-500">
                     <span id="paginationRange">1-10 of 87</span>
                     <div class="flex justify-center items-center">
                         <div class="pr-8">
@@ -416,8 +416,6 @@
 
                     userRoleList.insertAdjacentHTML('beforeend', html);
                 });
-
-
 
                 RowDetails.classList.remove('hidden');
                 firstColumn.classList.remove('lg:w-full');
