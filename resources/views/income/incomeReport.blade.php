@@ -12,40 +12,40 @@
             <!---Cards-->
             <!--<div class="flex w-full lg:h-1/6">
 
-                                                                                                                                                            <div id="topCards" class="grid grid-cols-1 lg:flex gap-2 lg:gap-08 w-full p-2 lg:p-0 lg:py- lg:pb-4">
+                                                                                                                                                                                            <div id="topCards" class="grid grid-cols-1 lg:flex gap-2 lg:gap-08 w-full p-2 lg:p-0 lg:py- lg:pb-4">
 
-                                                                                                                                                                <div id="totalLoan" class="bg-gray-100 px-4 py-2 lg:py-1 rounded-lg shadow-sm flex justify-between items-center w-full border" data-branch="balangoda">
-                                                                                                                                                                    <div class="flex flex-col w-1/2 ">
-                                                                                                                                                                        <h2 class="text-sm font-semibold text-gray-600">Total Loan</h2>
-                                                                                                                                                                        <p class="text-sm text-gray-400">Balangoda</p>
-                                                                                                                                                                    </div>
-                                                                                                                                                                    <div class="flex flex-col justify-items-end items-end  w-1/2">
-                                                                                                                                                                        <h1 class="text-xl md:text-lg  font-semibold text-right text-gray-600">05</h1>
-                                                                                                                                                                    </div>
-                                                                                                                                                                </div>
+                                                                                                                                                                                                <div id="totalLoan" class="bg-gray-100 px-4 py-2 lg:py-1 rounded-lg shadow-sm flex justify-between items-center w-full border" data-branch="balangoda">
+                                                                                                                                                                                                    <div class="flex flex-col w-1/2 ">
+                                                                                                                                                                                                        <h2 class="text-sm font-semibold text-gray-600">Total Loan</h2>
+                                                                                                                                                                                                        <p class="text-sm text-gray-400">Balangoda</p>
+                                                                                                                                                                                                    </div>
+                                                                                                                                                                                                    <div class="flex flex-col justify-items-end items-end  w-1/2">
+                                                                                                                                                                                                        <h1 class="text-xl md:text-lg  font-semibold text-right text-gray-600">05</h1>
+                                                                                                                                                                                                    </div>
+                                                                                                                                                                                                </div>
 
-                                                                                                                                                                <div id="totalResived" class="bg-gray-100 px-4 py-2 lg:py-2 rounded-lg shadow-sm flex justify-between items-center w-full border" data-branch="balangoda">
-                                                                                                                                                                    <div class="flex flex-col  w-1/2 ">
-                                                                                                                                                                        <h2 class="text-sm font-semibold text-gray-600 ">Total Resived</h2>
-                                                                                                                                                                        <p class="text-xs text-gray-400 ">Balangoda</p>
-                                                                                                                                                                    </div>
-                                                                                                                                                                    <div class="flex flex-col justify-items-end items-end  w-1/2">
-                                                                                                                                                                        <h1 class="text-xl md:text-lg font-semibold text-right text-gray-600">12000000/=</h1>
-                                                                                                                                                                    </div>
-                                                                                                                                                                </div>
+                                                                                                                                                                                                <div id="totalResived" class="bg-gray-100 px-4 py-2 lg:py-2 rounded-lg shadow-sm flex justify-between items-center w-full border" data-branch="balangoda">
+                                                                                                                                                                                                    <div class="flex flex-col  w-1/2 ">
+                                                                                                                                                                                                        <h2 class="text-sm font-semibold text-gray-600 ">Total Resived</h2>
+                                                                                                                                                                                                        <p class="text-xs text-gray-400 ">Balangoda</p>
+                                                                                                                                                                                                    </div>
+                                                                                                                                                                                                    <div class="flex flex-col justify-items-end items-end  w-1/2">
+                                                                                                                                                                                                        <h1 class="text-xl md:text-lg font-semibold text-right text-gray-600">12000000/=</h1>
+                                                                                                                                                                                                    </div>
+                                                                                                                                                                                                </div>
 
-                                                                                                                                                                <div id="totalIncome" class="bg-gray-100 px-4 py-2 lg:py-1 rounded-lg shadow-sm flex justify-between items-center w-full border" data-branch="ella">
-                                                                                                                                                                    <div class="flex flex-col w-1/2 ">
-                                                                                                                                                                        <h2 class="text-sm font-semibold text-gray-600">Total Income</h2>
-                                                                                                                                                                        <p class="text-sm text-gray-400">Ella</p>
-                                                                                                                                                                    </div>
-                                                                                                                                                                    <div class="flex flex-col justify-items-end items-end  w-1/2">
-                                                                                                                                                                        <h1 class="text-xl md:text-lg font-semibold text-right text-gray-600">180000/=</h1>
-                                                                                                                                                                    </div>
-                                                                                                                                                                </div>
+                                                                                                                                                                                                <div id="totalIncome" class="bg-gray-100 px-4 py-2 lg:py-1 rounded-lg shadow-sm flex justify-between items-center w-full border" data-branch="ella">
+                                                                                                                                                                                                    <div class="flex flex-col w-1/2 ">
+                                                                                                                                                                                                        <h2 class="text-sm font-semibold text-gray-600">Total Income</h2>
+                                                                                                                                                                                                        <p class="text-sm text-gray-400">Ella</p>
+                                                                                                                                                                                                    </div>
+                                                                                                                                                                                                    <div class="flex flex-col justify-items-end items-end  w-1/2">
+                                                                                                                                                                                                        <h1 class="text-xl md:text-lg font-semibold text-right text-gray-600">180000/=</h1>
+                                                                                                                                                                                                    </div>
+                                                                                                                                                                                                </div>
 
-                                                                                                                                                            </div>
-                                                                                                                                                        </div>-->
+                                                                                                                                                                                            </div>
+                                                                                                                                                                                        </div>-->
 
             <!--Start Table and Card Vies-->
 
@@ -143,19 +143,32 @@
                         </div>
                     </div>
                     <!-- Date filter -->
+                    @php
+                        $defaultStartDate = \Carbon\Carbon::today()->subDays(7)->format('Y-m-d');
+                        $defaultEndDate = \Carbon\Carbon::today()->format('Y-m-d');
+                        $filterStartDate = request()->startDate
+                            ? \Carbon\Carbon::parse(request()->startDate)
+                            : \Carbon\Carbon::parse($defaultStartDate);
+
+                        $filterEndDate = request()->endDate
+                            ? \Carbon\Carbon::parse(request()->endDate)
+                            : \Carbon\Carbon::parse($defaultEndDate);
+                    @endphp
                     <form method="GET" id="filterForm" class="w-full">
                         <div id="dateFilter"
                             class="flex flex-col lg:flex-row w-full justify-end lg:space-x-2 space-y-2 lg:space-y-0 lg:w-1/2">
                             <div
                                 class="w-full lg:w-1/2 p-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white flex items-center justify-between text-sm lg:text-xs">
                                 <label for="startDate" class="m-1">Start Date</label>
-                                <input type="date" name="startDate" id="startDate" value="{{ request('startDate') }}"
+                                <input type="date" name="startDate" id="startDate"
+                                    value="{{ request('startDate', $defaultStartDate) }}"
                                     onchange="document.getElementById('filterForm').submit();">
                             </div>
                             <div
                                 class="w-full lg:w-1/2 p-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white flex items-center justify-between text-sm lg:text-xs">
                                 <label for="endDate" class="m-1">End Date</label>
-                                <input type="date" name="endDate" id="endDate" value="{{ request('endDate') }}"
+                                <input type="date" name="endDate" id="endDate"
+                                    value="{{ request('endDate', $defaultEndDate) }}"
                                     onchange="document.getElementById('filterForm').submit();">
                             </div>
                         </div>
@@ -168,7 +181,7 @@
                 <!-- Centers Grid card format hidden for lg screens -->
                 <div id="centersGrid" class="grid grid-cols-1 sm:grid-cols-1 lg:hidden gap-4 p-2">
                     @php
-                         $groupsInformation=[];
+                        $groupsInformation = [];
                     @endphp
                     @if ($all_active_centers)
                         @foreach ($all_active_centers as $center)
@@ -179,159 +192,76 @@
                                     : null;
                                 $filterEndDate = request()->endDate ? \Carbon\Carbon::parse(request()->endDate) : null;
 
-                                $totalActiveLoans = $center->group->sum(function ($group) use (
+                                $selectedLoans = $center->group
+                                    ->flatMap(function ($group) {
+                                        return $group->member->flatMap(function ($member) {
+                                            return $member->loan;
+                                        });
+                                    })
+                                    ->filter(function ($loan) use ($filterStartDate, $filterEndDate) {
+                                        $issueDate = \Carbon\Carbon::parse($loan->issue_date);
+                                        $completedDate = $loan->completed_date
+                                            ? \Carbon\Carbon::parse($loan->completed_date)
+                                            : null;
+
+                                        return // Case 1: issue_date within range
+                                            ($filterStartDate &&
+                                                $filterEndDate &&
+                                                $issueDate->between($filterStartDate, $filterEndDate)) ||
+                                                // Case 2: completed_date within range
+                                                ($completedDate &&
+                                                    $filterStartDate &&
+                                                    $filterEndDate &&
+                                                    $completedDate->between($filterStartDate, $filterEndDate)) ||
+                                                // Case 3: issued before start and still active during the range
+                                                ($filterStartDate &&
+                                                    $issueDate->lt($filterStartDate) &&
+                                                    (!$completedDate || $completedDate->gt($filterStartDate)));
+                                    });
+
+                                $totalActiveLoans = $selectedLoans->count();
+                                $totalReceived = $selectedLoans->sum(function ($loan) use (
                                     $filterStartDate,
                                     $filterEndDate,
                                 ) {
-                                    return $group->member->sum(function ($member) use (
+                                    return $loan->installment->sum(function ($inst) use (
                                         $filterStartDate,
                                         $filterEndDate,
                                     ) {
-                                        return $member->loan
-                                            ->filter(function ($loan) use ($filterStartDate, $filterEndDate) {
-                                                // ✅ 1. If any installment is unpaid (payed_date is null)
-                                                if (
-                                                    $loan->installment->contains(function ($installment) {
-                                                        return $installment->status === 'UNPAYED';
-                                                    })
-                                                ) {
-                                                    return true;
-                                                }
+                                        $scheduled = Carbon::parse($inst->date_and_time)->addDays(6);
 
-                                                // ✅ 2. If any installment payed_date is within selected range
-                                                if (
-                                                    $loan->installment->contains(function ($installment) use (
-                                                        $filterStartDate,
-                                                        $filterEndDate,
-                                                    ) {
-                                                        if (!$installment->payed_date) {
-                                                            return false;
-                                                        }
-                                                        $payedDate = Carbon::parse($installment->payed_date);
-                                                        return (!$filterStartDate || $payedDate >= $filterStartDate) &&
-                                                            (!$filterEndDate || $payedDate <= $filterEndDate);
-                                                    })
-                                                ) {
-                                                    return true;
-                                                }
-
-                                                // ✅ 3. If any underpayment payed_date is within selected range
-                                                foreach ($loan->installment as $installment) {
-                                                    if (
-                                                        $installment->underpayment->contains(function (
-                                                            $underpayment,
-                                                        ) use ($filterStartDate, $filterEndDate) {
-                                                            if (!$underpayment->payed_date) {
-                                                                return false;
-                                                            }
-                                                            $underPayedDate = Carbon::parse($underpayment->payed_date);
-                                                            return (!$filterStartDate ||
-                                                                $underPayedDate >= $filterStartDate) &&
-                                                                (!$filterEndDate || $underPayedDate <= $filterEndDate);
-                                                        })
-                                                    ) {
-                                                        return true;
-                                                    }
-                                                }
-
-                                                // ✅ 4. If any installment was paid late, and due date is within range
-                                                if (
-                                                    $loan->installment->contains(function ($installment) use (
-                                                        $filterStartDate,
-                                                        $filterEndDate,
-                                                    ) {
-                                                        if (!$installment->payed_date || !$installment->date_and_time) {
-                                                            return false;
-                                                        }
-                                                        $payedDate = Carbon::parse($installment->payed_date);
-                                                        $dueDate = Carbon::parse($installment->date_and_time);
-
-                                                        return $dueDate < $payedDate &&
-                                                            (!$filterStartDate || $dueDate >= $filterStartDate) &&
-                                                            (!$filterEndDate || $dueDate <= $filterEndDate);
-                                                    })
-                                                ) {
-                                                    return true;
-                                                }
-
-                                                // ❌ Not active
-                                                return false;
-                                            })
-                                            ->count(); // Count matched loans
+                                        if ($filterStartDate && $filterEndDate) {
+                                            return $scheduled->between($filterStartDate, $filterEndDate)
+                                                ? $inst->amount
+                                                : 0;
+                                        } elseif ($filterStartDate) {
+                                            return $scheduled->gte($filterStartDate) ? $inst->amount : 0;
+                                        } elseif ($filterEndDate) {
+                                            return $scheduled->lte($filterEndDate) ? $inst->amount : 0;
+                                        }
+                                        return 0; // no filter: include all
                                     });
                                 });
-
-                                $totalReceived = $center->group->sum(function ($group) use (
+                                $totalIncome = $selectedLoans->sum(function ($loan) use (
                                     $filterStartDate,
                                     $filterEndDate,
                                 ) {
-                                    return $group->member->sum(function ($member) use (
+                                    return $loan->installment->sum(function ($inst) use (
                                         $filterStartDate,
                                         $filterEndDate,
                                     ) {
-                                        return $member->loan->sum(function ($loan) use (
-                                            $filterStartDate,
-                                            $filterEndDate,
-                                        ) {
-                                            return $loan->installment->sum(function ($installment) use (
-                                                $filterStartDate,
-                                                $filterEndDate,
-                                            ) {
-                                                // If installment has underpayments
-                                                if (
-                                                    $installment->underpayment &&
-                                                    $installment->underpayment->isNotEmpty()
-                                                ) {
-                                                    return $installment->underpayment
-                                                        ->filter(function ($underpayment) use (
-                                                            $filterStartDate,
-                                                            $filterEndDate,
-                                                        ) {
-                                                            $payedDate = Carbon::parse($underpayment->payed_date);
-                                                            return (!$filterStartDate ||
-                                                                $payedDate >= $filterStartDate) &&
-                                                                (!$filterEndDate || $payedDate <= $filterEndDate);
-                                                        })
-                                                        ->sum('amount'); // Sum filtered underpayments
-                                                }
+                                        $scheduled = Carbon::parse($inst->date_and_time)->addDays(6);
 
-                                                $payedDate = Carbon::parse($installment->payed_date);
-                                                if (
-                                                    (!$filterStartDate || $payedDate >= $filterStartDate) &&
-                                                    (!$filterEndDate || $payedDate <= $filterEndDate)
-                                                ) {
-                                                    return $installment->amount;
-                                                }
-
-                                                return 0; // No match
-                                            });
-                                        });
-                                    });
-                                });
-
-                                $totalIncome = $center->group->sum(function ($group) use (
-                                    $filterStartDate,
-                                    $filterEndDate,
-                                ) {
-                                    return $group->member->sum(function ($member) use (
-                                        $filterStartDate,
-                                        $filterEndDate,
-                                    ) {
-                                        return $member->loan->sum(function ($loan) use (
-                                            $filterStartDate,
-                                            $filterEndDate,
-                                        ) {
-                                            return $loan->installment
-                                                ->filter(function ($installment) use (
-                                                    $filterStartDate,
-                                                    $filterEndDate,
-                                                ) {
-                                                    $date = Carbon::parse($installment->date_and_time);
-                                                    return (!$filterStartDate || $date >= $filterStartDate) &&
-                                                        (!$filterEndDate || $date <= $filterEndDate);
-                                                })
-                                                ->sum('installment_amount');
-                                        });
+                                        if ($filterStartDate && $filterEndDate) {
+                                            return $scheduled->between($filterStartDate, $filterEndDate)
+                                                ? $inst->installment_amount
+                                                : 0;
+                                        } elseif ($filterStartDate) {
+                                            return $scheduled->gte($filterStartDate) ? $inst->installment_amount : 0;
+                                        } elseif ($filterEndDate) {
+                                            return $scheduled->lte($filterEndDate) ? $inst->installment_amount : 0;
+                                        }
+                                        return 0; // no filter: include all
                                     });
                                 });
 
@@ -518,8 +448,8 @@
                                         <th class="py-2 text-left">Received</th>
                                         <th class="py-2 text-left">No Paid</th>
                                         <th class="py-2 text-left">Total Income</th>
-                                        <th class="py-2 text-center">Action</th>
-                                    </tr>
+{{--                                         <th class="py-2 text-center">Action</th>
+ --}}                                    </tr>
                                 </thead>
                                 <tbody id="tableBody" class="text-gray-800 text-xs font-light bg-white">
                                     @if ($all_active_centers)
@@ -544,15 +474,15 @@
                                                 <td class="py-2 text-left">{{ capitalizeEachWord($center->manager_name) }}
                                                 </td>
                                                 @php
-
+/*
                                                     $filterStartDate = request()->startDate
                                                         ? \Carbon\Carbon::parse(request()->startDate)
                                                         : null;
                                                     $filterEndDate = request()->endDate
                                                         ? \Carbon\Carbon::parse(request()->endDate)
-                                                        : null;
+                                                        : null; */
 
-                                                    $totalReceived = $center->group->sum(function ($group) use (
+                                                    /* $totalReceived = $center->group->sum(function ($group) use (
                                                         $filterStartDate,
                                                         $filterEndDate,
                                                     ) {
@@ -583,7 +513,8 @@
                                                                                 return (!$filterStartDate ||
                                                                                     $payedDate >= $filterStartDate) &&
                                                                                     (!$filterEndDate ||
-                                                                                        $payedDate <= $filterEndDate);
+                                                                                        $payedDate <= $filterEndDate)
+;
                                                                             })
                                                                             ->sum('amount'); // Sum filtered underpayments
                                                                     }
@@ -605,8 +536,8 @@
                                                             });
                                                         });
                                                     });
-
-                                                    $totalIncome = $center->group->sum(function ($group) use (
+ */
+                                                   /*  $totalIncome = $center->group->sum(function ($group) use (
                                                         $filterStartDate,
                                                         $filterEndDate,
                                                     ) {
@@ -636,7 +567,7 @@
                                                         });
                                                     });
 
-                                                    $noPaid = $totalIncome - $totalReceived;
+                                                    $noPaid = $totalIncome - $totalReceived; */
 
                                                     $groupsInformation = $center->group->map(function ($group) use (
                                                         $filterStartDate,
@@ -790,7 +721,7 @@
                                                     {{ number_format($noPaid, 2) }}</td>
                                                 <td class="py-2 text-left">Rs. {{ number_format($totalIncome, 2) }}</td>
 
-                                                <td class="py-2 text-center flex justify-center items-center gap-1">
+                                                {{-- <td class="py-2 text-center flex justify-center items-center gap-1">
                                                     <a href="#" class="border rounded hover:bg-green-500">
                                                         <img src="{{ asset('assets/icons/Eye.svg') }}" alt="Eye"
                                                             class="h-3 w-3 m-1">
@@ -799,7 +730,7 @@
                                                         <img src="{{ asset('assets/icons/ArrowLineDown.svg') }}"
                                                             alt="Pencil" class="h-3 w-3 m-1">
                                                     </a>
-                                                </td>
+                                                </td> --}}
                                             </tr>
                                         @endforeach
                                     @endif
@@ -881,9 +812,9 @@
     </div>
 
     <script>
-    if($groupsInformation){
-        const groupsInformation = @json($groupsInformation);
-    }
+        if ($groupsInformation) {
+            const groupsInformation = @json($groupsInformation);
+        }
 
         //TABLE------------------------------------------------------------------------
         // Add alternating background colors to table rows
