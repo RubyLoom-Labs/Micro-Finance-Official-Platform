@@ -1,7 +1,7 @@
 @extends('layouts.layout')
 @php
     use Carbon\Carbon;
-     require_once resource_path('libs/first_letter_capitalization.php');
+    require_once resource_path('libs/first_letter_capitalization.php');
     require_once resource_path('libs/every_word_first_letter_capitalization.php');
 @endphp
 @section('contents')
@@ -11,28 +11,28 @@
             <!---Cards-->
             <!--<div class="flex w-full lg:h-1/6">
 
-                                                                                        <div id="topCards" class="grid grid-cols-1 lg:flex gap-2 lg:gap-08 w-full p-2 lg:p-0 lg:pb-4">
+                                                                                                <div id="topCards" class="grid grid-cols-1 lg:flex gap-2 lg:gap-08 w-full p-2 lg:p-0 lg:pb-4">
 
-                                                                                            <div id="totalLoan" class="bg-gray-100 px-4 py-2 lg:py-1 rounded-lg shadow-sm flex justify-between items-center w-full border" data-branch="balangoda">
-                                                                                                <div class="flex flex-col w-1/2">
-                                                                                                    <h2 class="text-sm font-semibold text-gray-600">Total Loans</h2>
-                                                                                                    <p class="text-sm text-gray-400">Balangoda</p>
-                                                                                                </div>
-                                                                                                <div class="flex flex-col justify-items-end items-end w-1/2">
-                                                                                                    <h1 class="text-xl md:text-lg font-semibold text-right text-gray-600">05</h1>
-                                                                                                </div>
+                                                                                                    <div id="totalLoan" class="bg-gray-100 px-4 py-2 lg:py-1 rounded-lg shadow-sm flex justify-between items-center w-full border" data-branch="balangoda">
+                                                                                                        <div class="flex flex-col w-1/2">
+                                                                                                            <h2 class="text-sm font-semibold text-gray-600">Total Loans</h2>
+                                                                                                            <p class="text-sm text-gray-400">Balangoda</p>
+                                                                                                        </div>
+                                                                                                        <div class="flex flex-col justify-items-end items-end w-1/2">
+                                                                                                            <h1 class="text-xl md:text-lg font-semibold text-right text-gray-600">05</h1>
+                                                                                                        </div>
 
-                                                                                            <div id="totalToReceive" class="bg-gray-100 px-4 py-2 lg:py-1 rounded-lg shadow-sm flex justify-between items-center w-full border" data-branch="ella">
-                                                                                                <div class="flex flex-col w-1/2">
-                                                                                                    <h2 class="text-sm font-semibold text-gray-600">To Receive</h2>
-                                                                                                    <p class="text-sm text-gray-400">Ella</p>
+                                                                                                    <div id="totalToReceive" class="bg-gray-100 px-4 py-2 lg:py-1 rounded-lg shadow-sm flex justify-between items-center w-full border" data-branch="ella">
+                                                                                                        <div class="flex flex-col w-1/2">
+                                                                                                            <h2 class="text-sm font-semibold text-gray-600">To Receive</h2>
+                                                                                                            <p class="text-sm text-gray-400">Ella</p>
+                                                                                                        </div>
+                                                                                                        <div class="flex flex-col justify-items-end items-end w-1/2">
+                                                                                                            <h1 class="text-xl md:text-lg font-semibold text-right text-gray-600">180000/=</h1>
+                                                                                                        </div>
+                                                                                                    </div>
                                                                                                 </div>
-                                                                                                <div class="flex flex-col justify-items-end items-end w-1/2">
-                                                                                                    <h1 class="text-xl md:text-lg font-semibold text-right text-gray-600">180000/=</h1>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    </div>-->
+                                                                                            </div>-->
 
             <!--Start Table and Card Views-->
             <div class="p-0 border-0 lg:py-2 lg:bg-sky-50 lg:border rounded-lg flex flex-col justify-between lg:h-full">
@@ -131,19 +131,32 @@
                         </div>
                     </div>
                     <!-- Date filter -->
+                    @php
+                        $defaultStartDate = \Carbon\Carbon::today()->subDays(7)->format('Y-m-d');
+                        $defaultEndDate = \Carbon\Carbon::today()->format('Y-m-d');
+                        $filterStartDate = request()->startDate
+                            ? \Carbon\Carbon::parse(request()->startDate)
+                            : \Carbon\Carbon::parse($defaultStartDate);
+
+                        $filterEndDate = request()->endDate
+                            ? \Carbon\Carbon::parse(request()->endDate)
+                            : \Carbon\Carbon::parse($defaultEndDate);
+                    @endphp
                     <form method="GET" id="filterForm" class="w-full">
                         <div id="dateFilter"
                             class="flex flex-col lg:flex-row w-full justify-end lg:space-x-2 space-y-2 lg:space-y-0 lg:w-1/2">
                             <div
                                 class="w-full lg:w-1/2 p-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white flex items-center justify-between text-sm lg:text-xs">
                                 <label for="startDate" class="m-1">Start Date</label>
-                                <input type="date" name="startDate" id="startDate" value="{{ request('startDate') }}"
+                                <input type="date" name="startDate" id="startDate"
+                                    value="{{ request('startDate', $defaultStartDate) }}"
                                     onchange="document.getElementById('filterForm').submit();">
                             </div>
                             <div
                                 class="w-full lg:w-1/2 p-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white flex items-center justify-between text-sm lg:text-xs">
                                 <label for="endDate" class="m-1">End Date</label>
-                                <input type="date" name="endDate" id="endDate" value="{{ request('endDate') }}"
+                                <input type="date" name="endDate" id="endDate"
+                                    value="{{ request('endDate', $defaultEndDate) }}"
                                     onchange="document.getElementById('filterForm').submit();">
                             </div>
                         </div>
@@ -157,89 +170,38 @@
                     <!-- Card for a center -->
                     @foreach ($all_active_centers as $center)
                         @php
-                            $filterStartDate = request()->startDate
-                                ? \Carbon\Carbon::parse(request()->startDate)
-                                : null;
-                            $filterEndDate = request()->endDate ? \Carbon\Carbon::parse(request()->endDate) : null;
-                            $totalActiveLoans = $center->group->sum(function ($group) use (
-                                $filterStartDate,
-                                $filterEndDate,
-                            ) {
-                                return $group->member->sum(function ($member) use ($filterStartDate, $filterEndDate) {
-                                    return $member->loan
-                                        ->filter(function ($loan) use ($filterStartDate, $filterEndDate) {
-                                            // ✅ 1. If any installment is unpaid (payed_date is null)
-                                            if (
-                                                $loan->installment->contains(function ($installment) {
-                                                    return $installment->status === 'UNPAYED';
-                                                })
-                                            ) {
-                                                return true;
-                                            }
+                             $filterStartDate = request()->startDate
+                                    ? \Carbon\Carbon::parse(request()->startDate)
+                                    : null;
+                                $filterEndDate = request()->endDate ? \Carbon\Carbon::parse(request()->endDate) : null;
+                            $selectedLoans = $center->group
+                                    ->flatMap(function ($group) {
+                                        return $group->member->flatMap(function ($member) {
+                                            return $member->loan;
+                                        });
+                                    })
+                                    ->filter(function ($loan) use ($filterStartDate, $filterEndDate) {
+                                        $issueDate = \Carbon\Carbon::parse($loan->issue_date);
+                                        $completedDate = $loan->completed_date
+                                            ? \Carbon\Carbon::parse($loan->completed_date)
+                                            : null;
 
-                                            // ✅ 2. If any installment payed_date is within selected range
-                                            if (
-                                                $loan->installment->contains(function ($installment) use (
-                                                    $filterStartDate,
-                                                    $filterEndDate,
-                                                ) {
-                                                    if (!$installment->payed_date) {
-                                                        return false;
-                                                    }
-                                                    $payedDate = Carbon::parse($installment->payed_date);
-                                                    return (!$filterStartDate || $payedDate >= $filterStartDate) &&
-                                                        (!$filterEndDate || $payedDate <= $filterEndDate);
-                                                })
-                                            ) {
-                                                return true;
-                                            }
+                                        return // Case 1: issue_date within range
+                                            ($filterStartDate &&
+                                                $filterEndDate &&
+                                                $issueDate->between($filterStartDate, $filterEndDate)) ||
+                                                // Case 2: completed_date within range
+                                                ($completedDate &&
+                                                    $filterStartDate &&
+                                                    $filterEndDate &&
+                                                    $completedDate->between($filterStartDate, $filterEndDate)) ||
+                                                // Case 3: issued before start and still active during the range
+                                                ($filterStartDate &&
+                                                    $issueDate->lt($filterStartDate) &&
+                                                    (!$completedDate || $completedDate->gt($filterStartDate)));
+                                    });
 
-                                            // ✅ 3. If any underpayment payed_date is within selected range
-                                            foreach ($loan->installment as $installment) {
-                                                if (
-                                                    $installment->underpayment->contains(function ($underpayment) use (
-                                                        $filterStartDate,
-                                                        $filterEndDate,
-                                                    ) {
-                                                        if (!$underpayment->payed_date) {
-                                                            return false;
-                                                        }
-                                                        $underPayedDate = Carbon::parse($underpayment->payed_date);
-                                                        return (!$filterStartDate ||
-                                                            $underPayedDate >= $filterStartDate) &&
-                                                            (!$filterEndDate || $underPayedDate <= $filterEndDate);
-                                                    })
-                                                ) {
-                                                    return true;
-                                                }
-                                            }
-
-                                            // ✅ 4. If any installment was paid late, and due date is within range
-                                            if (
-                                                $loan->installment->contains(function ($installment) use (
-                                                    $filterStartDate,
-                                                    $filterEndDate,
-                                                ) {
-                                                    if (!$installment->payed_date || !$installment->date_and_time) {
-                                                        return false;
-                                                    }
-                                                    $payedDate = Carbon::parse($installment->payed_date);
-                                                    $dueDate = Carbon::parse($installment->date_and_time);
-
-                                                    return $dueDate < $payedDate &&
-                                                        (!$filterStartDate || $dueDate >= $filterStartDate) &&
-                                                        (!$filterEndDate || $dueDate <= $filterEndDate);
-                                                })
-                                            ) {
-                                                return true;
-                                            }
-
-                                            // ❌ Not active
-                                            return false;
-                                        })
-                                        ->count(); // Count matched loans
-                                });
-                            });
+                                $totalActiveLoans = $selectedLoans->count();
                             $totalReceived = $center->group->sum(function ($group) use (
                                 $filterStartDate,
                                 $filterEndDate,

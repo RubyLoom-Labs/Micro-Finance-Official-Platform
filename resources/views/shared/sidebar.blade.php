@@ -110,14 +110,14 @@
                                     <span class="sidebar-text-mini">Collections</span>
                                 </a>
                             </li>
-                            <li>
+                            {{-- <li>
                                 <a href="/underpayment"
                                     class="flex items-center p-1 px-4 rounded-md space-x-2 hover:bg-sky-100 active:bg-sky-200">
                                     <img src="{{ asset('assets/icons/pay01.svg') }}" alt="Under Payments Icon"
                                         class="h-4 w-4">
                                     <span class="sidebar-text-mini">Under Payments</span>
                                 </a>
-                            </li>
+                            </li> --}}
                         </ul>
                     </li>
                 @endif

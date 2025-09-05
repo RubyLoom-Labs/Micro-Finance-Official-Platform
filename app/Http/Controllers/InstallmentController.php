@@ -163,12 +163,13 @@ class InstallmentController extends Controller
                 }
             }
 
+
             return response()->json([
                 'success' => true,
                 'message' => 'Installment updated successfully.'
             ]);
         } catch (\Exception $e) {
-
+            dd($e);
             Log::error('Error updating installment: ' . $e->getMessage());
             return redirect()->back()
                 /* ->with('show_create_popup', true) */

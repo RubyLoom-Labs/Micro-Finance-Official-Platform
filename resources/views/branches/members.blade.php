@@ -423,9 +423,9 @@
                                 <thead class="w-full text-gray-700 text-xs font-light bg-gray-100 sticky top-0">
                                     <tr class="uppercase w-full">
                                         <!--<th class="pl-2 text-left">
-                                                                                                                                                                                                                                                                                                                            <input type="checkbox" id="select-all"
-                                                                                                                                                                                                                                                                                                                                class="form-checkbox h-4 w-4 text-blue-400 m-1">
-                                                                                                                                                                                                                                     </th>-->
+                                                                                                                                                                                                                                                                                                                                    <input type="checkbox" id="select-all"
+                                                                                                                                                                                                                                                                                                                                        class="form-checkbox h-4 w-4 text-blue-400 m-1">
+                                                                                                                                                                                                                                             </th>-->
                                         <th class="py-2 text-center">#</th>
                                         <th class="py-2 text-left">Name</th>
                                         <th class="py-2 text-left">Center</th>
@@ -446,9 +446,9 @@
                                                 data-member_id='{{ $member->nic_number }}' data-loan-balance="20000"
                                                 data-member='@json($member)'>
                                                 <!--<td class="pl-2 text-left">
-                                                                                                                                                                                                                                                                                                                                <input type="checkbox" name="selected_ids[]" value="1"
-                                                                                                                                                                                                                                                                                                                                    class="form-checkbox h-4 w-4 text-blue-600 m-1">
-                                                                                                                                                                                                                                                                                                                            </td>-->
+                                                                                                                                                                                                                                                                                                                                        <input type="checkbox" name="selected_ids[]" value="1"
+                                                                                                                                                                                                                                                                                                                                            class="form-checkbox h-4 w-4 text-blue-600 m-1">
+                                                                                                                                                                                                                                                                                                                                    </td>-->
                                                 <td class="py-2 text-center">
                                                     {{ str_pad($member->id, 3, '0', STR_PAD_LEFT) }}
                                                 </td>
@@ -508,9 +508,9 @@
                                                 data-member_id='{{ $member->nic_number }}' data-loan-balance="20000"
                                                 data-member='@json($member)'>
                                                 <!--<td class="pl-2 text-left">
-                                                                                                                                                                                                                                                                                                                                <input type="checkbox" name="selected_ids[]" value="1"
-                                                                                                                                                                                                                                                                                                                                    class="form-checkbox h-4 w-4 text-blue-600 m-1">
-                                                                                                                                                                                                                                                                                                                            </td>-->
+                                                                                                                                                                                                                                                                                                                                        <input type="checkbox" name="selected_ids[]" value="1"
+                                                                                                                                                                                                                                                                                                                                            class="form-checkbox h-4 w-4 text-blue-600 m-1">
+                                                                                                                                                                                                                                                                                                                                    </td>-->
                                                 <td class="py-2 text-center">
                                                     {{ str_pad($member->id, 3, '0', STR_PAD_LEFT) }}
                                                 </td>
@@ -1026,8 +1026,9 @@
                         uncompletedLoan.installment.reduce((sum, item) => sum + parseFloat(item.amount),
                             0) :
                         0;
-
-                    const balance_amount = uncompletedLoan.loan_amount - total_paid;
+                    const balance_amount = Number(uncompletedLoan.loan_amount) + Number(uncompletedLoan
+                            .interest) -
+                        Number(total_paid);
 
                     const formatted_paid = 'Rs. ' + total_paid.toFixed(2);
                     const formatted_balance = 'Rs. ' + balance_amount.toFixed(2);

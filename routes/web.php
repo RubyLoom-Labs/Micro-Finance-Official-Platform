@@ -79,8 +79,8 @@ Route::middleware(['auth'])->group(function () {
     /*income*/
     Route::get('/income', [CenterController::class, 'incomeView'])->middleware('can:income')->name('centers.viewIncomeBlade');
     Route::get('/collection',  [CenterController::class, 'collectionView'])->middleware('can:income')->name('centers.viewCollectionBlade');
-    Route::get('/underpayment', [CenterController::class, 'underPaymentView'])->middleware('can:income')->name('centers.viewUnderPaymentBlade');
-
+/*     Route::get('/underpayment', [CenterController::class, 'underPaymentView'])->middleware('can:income')->name('centers.viewUnderPaymentBlade');
+ */
     //user roles routes
     Route::get('/userRole', [UserRoleController::class, 'userRolesView'])->middleware(['can:create-user-roles']);
     Route::post('/userRole/create', [UserRoleController::class, 'createUserRole'])->middleware(['can:create-user-roles'])->name('userRoles.create');

@@ -281,8 +281,8 @@
                                         <th class="py-2 text-left">Groups</th>
                                         <th class="py-2 text-left">Total Loans</th>
                                         <th class="py-2 text-left">Today Income</th>
-                                        <th class="py-2 text-center">Action</th>
-                                    </tr>
+{{--                                         <th class="py-2 text-center">Action</th>
+ --}}                                    </tr>
                                 </thead>
                                 <tbody id="tableBody" class="text-gray-800 text-xs font-light bg-white">
                                     @php
@@ -360,7 +360,7 @@
                                                     {{ str_pad($totalActiveLoans, 2, '0', STR_PAD_LEFT) }}</td>
                                                 <td id="receivedSlideBar" class="py-2 text-left">Rs.
                                                     {{ number_format($totalReceived, 2) }}</td>
-                                                <td class="py-2 text-center flex justify-center items-center gap-1">
+                                                {{-- <td class="py-2 text-center flex justify-center items-center gap-1">
                                                     <a href="#" class="border rounded hover:bg-green-500">
                                                         <img src="{{ asset('assets/icons/Eye.svg') }}" alt="Eye"
                                                             class="h-3 w-3 m-1">
@@ -369,7 +369,7 @@
                                                         <img src="{{ asset('assets/icons/ArrowLineDown.svg') }}"
                                                             alt="Pencil" class="h-3 w-3 m-1">
                                                     </a>
-                                                </td>
+                                                </td> --}}
                                             </tr>
                                         @endforeach
                                     @endif
@@ -572,7 +572,7 @@
             });
         }
         // Row Summary Details
-        document.querySelectorAll('.view-details').forEach(button => {
+       /*  document.querySelectorAll('.view-details').forEach(button => {
             button.addEventListener('click', (e) => {
                 e.preventDefault();
                 const row = button.closest('tr');
@@ -583,9 +583,7 @@
                 firstColumn.classList.remove('lg:w-full');
                 firstColumn.classList.add('lg:w-8/12');
                 RowDetails.classList.add('lg:flex');
-                /* document.getElementById('topCards').classList.add('lg:grid-cols-2'); */
-                /*   document.getElementById('dateFilter').classList.add('lg:hidden');
-                  document.getElementById('filterRow').classList.remove('lg:w-1/2'); */
+
 
                 const branchName = row.getAttribute('data-branch-name');
                 const centerName = row.getAttribute('data-center-name');
@@ -608,6 +606,6 @@
                 });
 
             });
-        });
+        }); */
     </script>
 @endsection
