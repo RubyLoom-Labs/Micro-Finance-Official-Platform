@@ -253,8 +253,8 @@
                                         <th class="py-2 text-left">Interest</th>
                                         <th class="py-2 text-left">Terms</th>
                                         <th class="py-2 text-left">Installment</th>
-                                        <th class="py-2 text-center">Action</th>
-                                    </tr>
+{{--                                         <th class="py-2 text-center">Action</th>
+ --}}                                    </tr>
                                 </thead>
                                 <tbody id="tableBody" class="text-gray-800 text-xs font-light bg-white">
                                     @if ($allActiveLoans)
@@ -270,11 +270,11 @@
                                                 </td>
                                                 <td class="py-2 text-left">{{ $loans->member->nic_number }}</td>
                                                 <td class="py-2 text-left">{{ $loans->issue_date }}</td>
-                                                <td class="py-2 text-left">{{ $loans->interest_rate }}</td>
+                                                <td class="py-2 text-left"> {{ number_format($loans->interest, 2) }}</td>
                                                 <td class="py-2 text-left">{{ $loans->terms }}</td>
                                                 <td class="py-2 text-left">Rs.
                                                     {{ number_format($loans->installment_price, 2) }}</td>
-                                                <td class="py-2 text-center flex justify-center items-center gap-1">
+                                               {{--  <td class="py-2 text-center flex justify-center items-center gap-1">
                                                     <a href="#" class="border rounded hover:bg-green-500">
                                                         <img src="{{ asset('assets/icons/Eye.svg') }}" alt="Eye"
                                                             class="h-3 w-3 m-1">
@@ -283,7 +283,7 @@
                                                         <img src="{{ asset('assets/icons/ArrowLineDown.svg') }}"
                                                             alt="Pencil" class="h-3 w-3 m-1">
                                                     </a>
-                                                </td>
+                                                </td> --}}
                                             </tr>
                                         @endforeach
                                     @endif

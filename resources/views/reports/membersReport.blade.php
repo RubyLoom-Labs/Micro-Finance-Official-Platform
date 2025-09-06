@@ -249,8 +249,8 @@
                                             <th class="py-2 text-left">NIC</th>
                                             <th class="py-2 text-left">Current Loan Price</th>
                                             <th class="py-2 text-left">Loan Start Date</th>
-                                            <th class="py-2 text-center">Action</th>
-                                        </tr>
+{{--                                             <th class="py-2 text-center">Action</th>
+ --}}                                        </tr>
                                     </thead>
                                     <tbody id="tableBody" class="text-gray-800 text-xs font-light bg-white">
                                         @foreach ($allActiveMembers as $member)
@@ -294,7 +294,7 @@
                                                     <td class="py-2 text-left">
                                                         {{ $member->loan->firstWhere('status', 'UNCOMPLETED')->issue_date }}
                                                     </td>
-                                                    <td class="py-2 text-center flex justify-center items-center gap-1">
+                                                   {{--  <td class="py-2 text-center flex justify-center items-center gap-1">
                                                         <a href="{{ url('/memberSummery/' . $member->id) }}"
                                                             class="border rounded hover:bg-green-500">
                                                             <img src="{{ asset('assets/icons/Eye.svg') }}" alt="Eye"
@@ -310,7 +310,7 @@
                                                             <img src="{{ asset('assets/icons/Plus.svg') }}"
                                                                 alt="Pencil" class="h-3 w-3 m-1">
                                                         </a>
-                                                    </td>
+                                                    </td> --}}
                                                 </tr>
                                             @endif
                                         @endforeach
@@ -394,8 +394,8 @@
                                             <th class="py-2 text-left">NIC</th>
                                             <th class="py-2 text-left">Last Loan Price</th>
                                             <th class="py-2 text-left">Loan End Date</th>
-                                            <th class="py-2 text-center">Action</th>
-                                        </tr>
+{{--                                             <th class="py-2 text-center">Action</th>
+ --}}                                        </tr>
                                     </thead>
                                     <tbody id="tableBody" class="text-gray-800 text-xs font-light bg-white">
                                         @foreach ($allActiveMembers as $member)
@@ -437,7 +437,7 @@
                                                     <td class="py-2 text-left">
                                                         {{ $latest_completed_loan->completed_date ?? 'NA' }}
                                                     </td>
-                                                    <td class="py-2 text-center flex justify-center items-center gap-1">
+                                                    {{-- <td class="py-2 text-center flex justify-center items-center gap-1">
                                                         <a href="{{ url('/memberSummery/' . $member->id) }}"
                                                             class="border rounded hover:bg-green-500">
                                                             <img src="{{ asset('assets/icons/Eye.svg') }}" alt="Eye"
@@ -453,7 +453,7 @@
                                                             <img src="{{ asset('assets/icons/Plus.svg') }}"
                                                                 alt="Pencil" class="h-3 w-3 m-1">
                                                         </a>
-                                                    </td>
+                                                    </td> --}}
                                                 </tr>
                                             @endif
                                         @endforeach

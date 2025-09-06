@@ -79,7 +79,7 @@ Route::middleware(['auth'])->group(function () {
     /*income*/
     Route::get('/income', [CenterController::class, 'incomeView'])->middleware('can:income')->name('centers.viewIncomeBlade');
     Route::get('/collection',  [CenterController::class, 'collectionView'])->middleware('can:income')->name('centers.viewCollectionBlade');
-/*     Route::get('/underpayment', [CenterController::class, 'underPaymentView'])->middleware('can:income')->name('centers.viewUnderPaymentBlade');
+    /*     Route::get('/underpayment', [CenterController::class, 'underPaymentView'])->middleware('can:income')->name('centers.viewUnderPaymentBlade');
  */
     //user roles routes
     Route::get('/userRole', [UserRoleController::class, 'userRolesView'])->middleware(['can:create-user-roles']);
@@ -135,18 +135,12 @@ Route::middleware(['auth'])->group(function () {
     });
 
     /*Reports*/
-    Route::get('/loneIssue', function () {
-        return view('reports/loneIssue');
-    })->middleware('can:reports');
+    Route::get('/loneIssue', [LoanController::class, 'loanIssueReportView'])->middleware('can:reports');
     Route::get('/incomeReports', function () {
         return view('reports/incomeReports');
     })->middleware('can:reports');
-    Route::get('/pendingPaymentsReport', function () {
-        return view('reports/pendingPaymentsReport');
-    })->middleware('can:reports');
-    Route::get('/membersReport', function () {
-        return view('reports/membersReport');
-    })->middleware('can:reports');
+    Route::get('/pendingPaymentsReport', [LoanController::class, 'pendingLoanReportView'])->middleware('can:reports');
+    Route::get('/membersReport', [MemberController::class, 'viewAllMembersForReports'])->middleware('can:reports');
 
     /*Settings*/
 });
