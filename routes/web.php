@@ -123,7 +123,7 @@ Route::middleware(['auth'])->group(function () {
 
     /*Payments*/
     Route::get('/payments', [LoanController::class, 'viewUncompletedLoans'])->middleware('can:payments');
-    Route::get('/pending', [LoanController::class, 'viewPendingLoans'])->middleware('can:payments');
+    Route::get('/under-payment', [LoanController::class, 'viewPendingLoans'])->middleware('can:payments');
     Route::get('/nopaid', [LoanController::class, 'viewNoPaidLoans'])->middleware('can:payments');
     /*  Route::get('/paymentsSummery', function () {
         return view('payments/paymentsSummery');

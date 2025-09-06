@@ -112,7 +112,27 @@
                 <!--CARD SECTION-->
                 <div id="memberGrid" class="grid grid-cols-1 sm:grid-cols-1 lg:hidden gap-4 p-2">
                     <!-- Card for a center -->
-                    @foreach ($allActiveLoans as $loans)
+                    @php
+                        $nopaymentLoans = $allActiveLoans->filter(function ($loan) {
+                            $installments = collect($loan->installments ?? $loan->installment)->sortByDesc(
+                                'installment_number',
+                            );
+
+                            if ($installments->isEmpty()) {
+                                return false; // no installments, skip
+                            }
+
+                            $lastInstallment = $installments->first();
+                            $secondLastInstallment = $installments->skip(1)->first(); // may be null
+
+                            return $loan->status === 'UNCOMPLETED' &&
+                                ($lastInstallment->status === 'NOPAYED' ||
+                                    ($lastInstallment->status === 'UNPAYED' &&
+                                        $secondLastInstallment &&
+                                        $secondLastInstallment->status === 'NOPAYED'));
+                        });
+                    @endphp
+                    @foreach ($nopaymentLoans as $loans)
                         <div class="rounded-md shadow flex flex-col justify-between w-full border bg-gray-100 hover:bg-gray-300"
                             data-member="Dunura" data-center="balangoda" data-loan-balance="85955200"
                             data-installment="2000 (2 missed)" data-total-amount="6000">
@@ -121,7 +141,7 @@
                                     {{ capitalizeEachWord($loans->member->full_name) }}</p>
                             </div>
                             <hr>
-                            @php
+                            {{--  @php
                                 $loanTotal = $loans->loan_amount + $loans->interest;
                                 $noPaidAmount = 0;
                                 $paidAmount = 0;
@@ -139,6 +159,39 @@
                                         $paidAmount += $installment->amount;
                                     }
                                 }
+                            @endphp --}}
+                            @php
+                                $loanTotal = $loans->loan_amount + $loans->interest;
+                                $totalPayed = $loans->installment->sum(function ($installment) {
+                                    return $installment->underpayment->sum('amount');
+                                });
+
+                                $installments = collect($loans->installment)->sortByDesc('installment_number');
+
+                                $lastInstallment = $installments->first();
+                                $secondLastInstallment = $installments->skip(1)->first();
+
+                                // assign the installment to use for underpayment calculation
+                                $targetInstallment = null;
+
+                                if ($lastInstallment && $lastInstallment->status === 'NOPAYED') {
+                                    $targetInstallment = $lastInstallment;
+                                } elseif (
+                                    $lastInstallment->status === 'UNPAYED' &&
+                                    $secondLastInstallment &&
+                                    $secondLastInstallment->status === 'NOPAYED'
+                                ) {
+                                    $targetInstallment = $secondLastInstallment;
+                                }
+
+                                // fallback if no installment meets the condition
+                                if ($targetInstallment) {
+                                    $underpayment =
+                                        $targetInstallment->installment_number * $loans->installment_price -
+                                        $totalPayed;
+                                } else {
+                                    $underpayment = 0; // or handle as needed
+                                }
                             @endphp
                             <div
                                 class="h-max py-2 px-4 flex flex-col justify-between space-y-1 bg-gray-200 hover:bg-gray-300">
@@ -150,21 +203,21 @@
                                     </div>
                                     <div class="text-xs flex items-center space-x-1">
                                         <p class="">Loan Balance :</p>
-                                        <p class="text-gray-700">Rs. {{ number_format($loanTotal - $paidAmount, 2) }}</p>
+                                        <p class="text-gray-700">Rs. {{ number_format($loanTotal - $totalPayed, 2) }}</p>
                                     </div>
                                 </div>
                                 <div class="grid grid-cols-2 w-full">
                                     <div class="text-xs flex items-center space-x-1">
-                                        <p class="">Installment :</p>
-                                        <p class="text-gray-700">Rs. {{ number_format($noPaidAmount, 2) }}</p>
+                                        <p class="">No Paid Balance :</p>
+                                        <p class="text-gray-700">Rs. {{ number_format($underpayment, 2) }}</p>
                                     </div>
                                 </div>
-                                <div class="grid grid-cols-2 w-full">
+                                {{-- <div class="grid grid-cols-2 w-full">
                                     <div class="text-xs flex items-center space-x-1">
                                         <p class="">Total Amount :</p>
                                         <p class="text-gray-700">Rs. {{ number_format($loanTotal, 2) }}</p>
                                     </div>
-                                </div>
+                                </div> --}}
                             </div>
                         </div>
                     @endforeach
@@ -181,14 +234,14 @@
                                         <th class="pl-4 py-2 text-left">#</th>
                                         <th class="py-2 text-left">Name</th>
                                         <th class="py-2 text-left">Center</th>
-                                        <th class="py-2 text-center">Loan Balance</th>
-                                        <th class="py-2 text-center">Installment</th>
+                                        <th class="py-2 text-center">No Paid Balance</th>
+                                        {{--  <th class="py-2 text-center">Installment</th>
                                         <th class="py-2 text-center">Total Amount</th>
-                                        <th class="py-2 text-center">Action</th>
+                                        <th class="py-2 text-center">Action</th> --}}
                                     </tr>
                                 </thead>
                                 <tbody id="tableBody" class="text-gray-800 text-xs font-light bg-white w-full">
-                                    @foreach ($allActiveLoans as $loans)
+                                    @foreach ($nopaymentLoans as $loans)
                                         <tr class="border-b border-gray-200 hover:bg-sky-100 cursor-pointer rounded-lg view-details"
                                             data-member-name="{{ capitalizeEachWord($loans->member->full_name) }}"
                                             data-center-name=" {{ capitalizeEachWord($loans->member->group->center->center_name) }}"
@@ -203,7 +256,7 @@
                                             </td>
                                             <td class="py-2 text-left">
                                                 {{ capitalizeEachWord($loans->member->group->center->center_name) }}</td>
-                                            @php
+                                            {{-- @php
                                                 $noPaidAmount = 0;
                                                 $paidAmount = 0;
                                                 $now = Carbon::now();
@@ -219,19 +272,54 @@
                                                         }
                                                         $paidAmount += $installment->amount;
                                                     }
+                                                } --}}
+                                            @php
+                                                $loanTotal = $loans->loan_amount + $loans->interest;
+                                                $totalPayed = $loans->installment->sum(function ($installment) {
+                                                    return $installment->underpayment->sum('amount');
+                                                });
+
+                                                $installments = collect($loans->installment)->sortByDesc(
+                                                    'installment_number',
+                                                );
+
+                                                $lastInstallment = $installments->first();
+                                                $secondLastInstallment = $installments->skip(1)->first();
+
+                                                // assign the installment to use for underpayment calculation
+                                                $targetInstallment = null;
+
+                                                if ($lastInstallment && $lastInstallment->status === 'NOPAYED') {
+                                                    $targetInstallment = $lastInstallment;
+                                                } elseif (
+                                                    $lastInstallment->status === 'UNPAYED' &&
+                                                    $secondLastInstallment &&
+                                                    $secondLastInstallment->status === 'NOPAYED'
+                                                ) {
+                                                    $targetInstallment = $secondLastInstallment;
+                                                }
+
+                                                // fallback if no installment meets the condition
+                                                if ($targetInstallment) {
+                                                    $underpayment =
+                                                        $targetInstallment->installment_number *
+                                                            $loans->installment_price -
+                                                        $totalPayed;
+                                                } else {
+                                                    $underpayment = 0; // or handle as needed
                                                 }
                                             @endphp
-                                            <td class="py-2 text-center">Rs. {{ number_format($paidAmount, 2) }}</td>
+                                           {{--  <td class="py-2 text-center">Rs. {{ number_format(  $underpayment, 2) }}</td>
 
                                             <td class="py-2 text-center"><span class="bg-yellow-400 p-1 px-4 rounded ">Rs.
                                                     {{ number_format($noPaidAmount, 2) }}</span></td>
                                             @php
                                                 $loanTotal = $loans->loan_amount + $loans->interest;
-                                            @endphp
+                                            @endphp --}}
                                             <td class="py-2 text-center"><span
                                                     class="bg-red-600 p-1 px-4 rounded text-white">Rs.
-                                                    {{ number_format($loanTotal, 2) }}</span> </td>
-                                            <td class="py-2 text-center flex justify-center items-center gap-1">
+                                                    {{ number_format($underpayment, 2) }}</span> </td>
+                                            {{-- <td class="py-2 text-center flex justify-center items-center gap-1">
                                                 <a href="#" class="border rounded hover:bg-green-500">
                                                     <img src="{{ asset('assets/icons/Eye.svg') }}" alt="Eye"
                                                         class="h-3 w-3 m-1">
@@ -244,7 +332,7 @@
                                                     <img src="{{ asset('assets/icons/Money.svg') }}" alt="Money"
                                                         class="h-3 w-3 m-1">
                                                 </a>
-                                            </td>
+                                            </td> --}}
                                         </tr>
                                     @endforeach
 

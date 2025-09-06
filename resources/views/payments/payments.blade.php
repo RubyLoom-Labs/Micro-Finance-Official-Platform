@@ -127,23 +127,11 @@
                             </div>
                             <hr>
                             @php
+                                $today = Carbon::today();
+                                $totalPayed = $loans->installment->sum(function ($installment) {
+                                    return $installment->underpayment->sum('amount');
+                                });
                                 $loanTotal = $loans->loan_amount + $loans->interest;
-                                $noPaidAmount = 0;
-                                $paidAmount = 0;
-                                $now = Carbon::now();
-                                if ($loans->installment) {
-                                    foreach ($loans->installment as $installment) {
-                                        if ($installment->date_and_time < $now) {
-                                            $expected = $installment->installment_amount;
-                                            $paid = $installment->amount;
-
-                                            if ($paid < $expected) {
-                                                $noPaidAmount += $expected - $paid;
-                                            }
-                                        }
-                                        $paidAmount += $installment->amount;
-                                    }
-                                }
                             @endphp
                             <div
                                 class="h-max py-2 px-4 flex flex-col justify-between space-y-1 bg-gray-200 hover:bg-gray-300">
@@ -161,7 +149,7 @@
                                 <div class="grid grid-cols-2 w-full">
                                     <div class="text-xs flex items-center space-x-1 ">
                                         <p class="">Loan Balance :</p>
-                                        <p class="text-gray-700">Rs. {{ number_format($loanTotal - $paidAmount, 2) }}</p>
+                                        <p class="text-gray-700">Rs. {{ number_format($loanTotal - $totalPayed, 2) }}</p>
                                     </div>
                                 </div>
                             </div>
@@ -183,8 +171,10 @@
                                         <th class="py-2 text-left">Name</th>
                                         <th class="py-2 text-left">Center</th>
                                         <th class="py-2 text-left">NIC</th>
+                                        <th class="py-2 text-left">Total Received</th>
                                         <th class="py-2 text-left">Loan Balance</th>
-                                        <th class="py-2 text-center">Action</th>
+                                        {{--                                         <th class="py-2 text-center">Action</th>
+ --}}
                                     </tr>
                                 </thead>
                                 <tbody class="text-gray-800 text-xs font-light bg-white w-full">
@@ -207,13 +197,15 @@
                                             <td class="py-2 text-left">
                                                 {{ capitalizeEachWord($loans->member->nic_number) }}
                                             </td>
-                                            @php
-                                                $loanTotal = $loans->loan_amount + $loans->interest;
-                                            @endphp
+
                                             <td class="py-2 text-left">Rs.
-                                                {{ number_format($loanTotal - $paidAmount, 2) }}
+                                                {{ number_format($totalPayed, 2) }}
                                             </td>
-                                            <td class="py-2 text-center flex justify-center items-center gap-1">
+                                            <td class="py-2 text-left">Rs.
+                                                {{ number_format($loanTotal - $totalPayed, 2) }}
+                                            </td>
+
+                                            {{--  <td class="py-2 text-center flex justify-center items-center gap-1">
                                                 <a href="#" class="border rounded hover:bg-green-500">
                                                     <img src="{{ asset('assets/icons/Eye.svg') }}" alt="Eye"
                                                         class="h-3 w-3 m-1">
@@ -226,7 +218,7 @@
                                                     <img src="{{ asset('assets/icons/Money.svg') }}" alt="Pencil"
                                                         class="h-3 w-3 m-1">
                                                 </a>
-                                            </td>
+                                            </td> --}}
                                         </tr>
                                     @endforeach
                                     <!-- Add more rows as needed -->
@@ -608,52 +600,49 @@
         }
 
         // Row Summary Details
-        document.querySelectorAll('.view-details').forEach(button => {
-            button.addEventListener('click', (e) => {
-                e.preventDefault();
-                const row = button.closest('tr');
-                const RowDetails = document.getElementById('RowDetails');
-                const firstColumn = document.getElementById('firstColumn');
+        /*  document.querySelectorAll('.view-details').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const row = button.closest('tr');
+                    const RowDetails = document.getElementById('RowDetails');
+                    const firstColumn = document.getElementById('firstColumn');
 
-                RowDetails.classList.remove('hidden');
-                firstColumn.classList.remove('lg:w-full');
-                firstColumn.classList.add('lg:w-8/12');
-                RowDetails.classList.add('lg:flex');
-                /*  totalLoan.classList.add('lg:hidden');
-                 topCards.classList.add('lg:grid-cols-2');
-                 dateFilter.classList.add('lg:hidden');
-                 filterRow.classList.remove('lg:w-1/2'); */
+                    RowDetails.classList.remove('hidden');
+                    firstColumn.classList.remove('lg:w-full');
+                    firstColumn.classList.add('lg:w-8/12');
+                    RowDetails.classList.add('lg:flex');
 
-                const memberName = row.getAttribute('data-member-name');
-                const centerName = row.getAttribute('data-center-name');
-                const branchName = row.getAttribute('data-branch-name');
-                const groupName = row.getAttribute('data-group-name');
-                const address = row.getAttribute('data-address');
-                const loanCount = JSON.parse(row.getAttribute('data-loan'));
 
-                console.log(loanCount);
-                document.getElementById('memberNameSlideBar').textContent = memberName;
-                document.getElementById('branchNameSlideBar').textContent = branchName;
-                document.getElementById('centerNameSlideBar').textContent = centerName;
-                document.getElementById('groupNameSlideBar').textContent = groupName;
-                document.getElementById('num01SlideBar').textContent = loanCount.member.mobile_number_1;
-                document.getElementById('num02SlideBar').textContent = loanCount.member.mobile_number_2;
-                document.getElementById('NICSlideBar').textContent = loanCount.member.nic_number;
-                document.getElementById('memberAddressSlideBar').textContent = loanCount.member.address;
-                document.getElementById('LoanAmountSlideBar').textContent = 'Rs. ' + parseFloat(loanCount
-                    .loan_amount).toFixed(2);
-                document.getElementById('InterestSlideBar').textContent = 'Rs. ' + parseFloat(loanCount
-                    .interest).toFixed(2);
-                document.getElementById('IssueDateSlideBar').textContent = loanCount.issue_date;
-                document.getElementById('InstallmentSlideBar').textContent = 'Rs. ' + parseFloat(loanCount
-                    .installment_price).toFixed(2);
-                document.getElementById('TermsSlideBar').textContent = loanCount.terms;
-                document.getElementById('DocumentChagersSlideBar').textContent = 'Rs. ' + parseFloat(
-                    loanCount.document_charges).toFixed(2);
+                    const memberName = row.getAttribute('data-member-name');
+                    const centerName = row.getAttribute('data-center-name');
+                    const branchName = row.getAttribute('data-branch-name');
+                    const groupName = row.getAttribute('data-group-name');
+                    const address = row.getAttribute('data-address');
+                    const loanCount = JSON.parse(row.getAttribute('data-loan'));
 
+                    console.log(loanCount);
+                    document.getElementById('memberNameSlideBar').textContent = memberName;
+                    document.getElementById('branchNameSlideBar').textContent = branchName;
+                    document.getElementById('centerNameSlideBar').textContent = centerName;
+                    document.getElementById('groupNameSlideBar').textContent = groupName;
+                    document.getElementById('num01SlideBar').textContent = loanCount.member.mobile_number_1;
+                    document.getElementById('num02SlideBar').textContent = loanCount.member.mobile_number_2;
+                    document.getElementById('NICSlideBar').textContent = loanCount.member.nic_number;
+                    document.getElementById('memberAddressSlideBar').textContent = loanCount.member.address;
+                    document.getElementById('LoanAmountSlideBar').textContent = 'Rs. ' + parseFloat(loanCount
+                        .loan_amount).toFixed(2);
+                    document.getElementById('InterestSlideBar').textContent = 'Rs. ' + parseFloat(loanCount
+                        .interest).toFixed(2);
+                    document.getElementById('IssueDateSlideBar').textContent = loanCount.issue_date;
+                    document.getElementById('InstallmentSlideBar').textContent = 'Rs. ' + parseFloat(loanCount
+                        .installment_price).toFixed(2);
+                    document.getElementById('TermsSlideBar').textContent = loanCount.terms;
+                    document.getElementById('DocumentChagersSlideBar').textContent = 'Rs. ' + parseFloat(
+                        loanCount.document_charges).toFixed(2);
+
+                });
             });
-        });
-
+     */
         //Laon Card
         /*const toggleBtn = document.getElementById('toggleDetails');
         const details = document.getElementById('installmentDetails');

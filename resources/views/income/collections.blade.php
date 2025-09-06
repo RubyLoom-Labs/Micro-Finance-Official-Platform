@@ -10,30 +10,30 @@
         <div id="firstColumn" class="w-full h-full p-2 lg:border-r lg:p-4 transition-all duration-300 lg:relative lg:py-4">
             <!---Cards-->
             <!--<div class="flex w-full lg:h-1/6">
-                                                                             Mobile View: Cards for each center
-                                                                            <div id="topCards" class="grid grid-cols-1 lg:flex gap-2 lg:gap-08 w-full p-2 lg:p-0 lg:pb-4">
+                                                                                 Mobile View: Cards for each center
+                                                                                <div id="topCards" class="grid grid-cols-1 lg:flex gap-2 lg:gap-08 w-full p-2 lg:p-0 lg:pb-4">
 
-                                                                                <div id="totalLoan" class="bg-gray-100 px-4 py-2 lg:py-1 rounded-lg shadow-sm flex justify-between items-center w-full border" data-branch="balangoda">
-                                                                                    <div class="flex flex-col w-1/2">
-                                                                                        <h2 class="text-sm font-semibold text-gray-600">Total Loans</h2>
-                                                                                        <p class="text-sm text-gray-400">Balangoda</p>
+                                                                                    <div id="totalLoan" class="bg-gray-100 px-4 py-2 lg:py-1 rounded-lg shadow-sm flex justify-between items-center w-full border" data-branch="balangoda">
+                                                                                        <div class="flex flex-col w-1/2">
+                                                                                            <h2 class="text-sm font-semibold text-gray-600">Total Loans</h2>
+                                                                                            <p class="text-sm text-gray-400">Balangoda</p>
+                                                                                        </div>
+                                                                                        <div class="flex flex-col justify-items-end items-end w-1/2">
+                                                                                            <h1 class="text-xl md:text-lg font-semibold text-right text-gray-600">05</h1>
+                                                                                        </div>
                                                                                     </div>
-                                                                                    <div class="flex flex-col justify-items-end items-end w-1/2">
-                                                                                        <h1 class="text-xl md:text-lg font-semibold text-right text-gray-600">05</h1>
+
+                                                                                    <div id="totalIncome" class="bg-gray-100 px-4 py-2 lg:py-1 rounded-lg shadow-sm flex justify-between items-center w-full border" data-branch="ella">
+                                                                                        <div class="flex flex-col w-1/2">
+                                                                                            <h2 class="text-sm font-semibold text-gray-600">Today Income</h2>
+                                                                                            <p class="text-sm text-gray-400">Ella</p>
+                                                                                        </div>
+                                                                                        <div class="flex flex-col justify-items-end items-end w-1/2">
+                                                                                            <h1 class="text-xl md:text-lg font-semibold text-right text-gray-600">180000/=</h1>
+                                                                                        </div>
                                                                                     </div>
                                                                                 </div>
-
-                                                                                <div id="totalIncome" class="bg-gray-100 px-4 py-2 lg:py-1 rounded-lg shadow-sm flex justify-between items-center w-full border" data-branch="ella">
-                                                                                    <div class="flex flex-col w-1/2">
-                                                                                        <h2 class="text-sm font-semibold text-gray-600">Today Income</h2>
-                                                                                        <p class="text-sm text-gray-400">Ella</p>
-                                                                                    </div>
-                                                                                    <div class="flex flex-col justify-items-end items-end w-1/2">
-                                                                                        <h1 class="text-xl md:text-lg font-semibold text-right text-gray-600">180000/=</h1>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>-->
+                                                                            </div>-->
 
             <!--Start Table and Card Views-->
             <div class="p-0 border-0 lg:py-2 lg:bg-sky-50 lg:border rounded-lg flex flex-col justify-between lg:h-full">
@@ -281,8 +281,9 @@
                                         <th class="py-2 text-left">Groups</th>
                                         <th class="py-2 text-left">Total Loans</th>
                                         <th class="py-2 text-left">Today Income</th>
-{{--                                         <th class="py-2 text-center">Action</th>
- --}}                                    </tr>
+                                        {{--                                         <th class="py-2 text-center">Action</th>
+ --}}
+                                    </tr>
                                 </thead>
                                 <tbody id="tableBody" class="text-gray-800 text-xs font-light bg-white">
                                     @php
@@ -293,9 +294,12 @@
                                             @php
 
                                                 $today = Carbon::today();
-                                                $totalActiveLoans = $center->group->sum(function ($group) {
-                                                    return $group->member->sum(function ($member) {
-                                                        return $member->loan->where('status', 'UNCOMPLETED')->count();
+                                                $totalActiveLoans = $center->group->sum(function ($group)use ($today) {
+                                                    return $group->member->sum(function ($member)use ($today) {
+                                                        return $member->loan
+                                                            ->where('status', 'UNCOMPLETED')
+                                                            ->merge($member->loan->where('completed_date', $today))
+                                                            ->count();
                                                     });
                                                 });
                                                 $totalReceived = $center->group->sum(function ($group) use ($today) {
@@ -572,40 +576,40 @@
             });
         }
         // Row Summary Details
-       /*  document.querySelectorAll('.view-details').forEach(button => {
-            button.addEventListener('click', (e) => {
-                e.preventDefault();
-                const row = button.closest('tr');
-                const RowDetails = document.getElementById('RowDetails');
-                const firstColumn = document.getElementById('firstColumn');
+        /*  document.querySelectorAll('.view-details').forEach(button => {
+             button.addEventListener('click', (e) => {
+                 e.preventDefault();
+                 const row = button.closest('tr');
+                 const RowDetails = document.getElementById('RowDetails');
+                 const firstColumn = document.getElementById('firstColumn');
 
-                RowDetails.classList.remove('hidden');
-                firstColumn.classList.remove('lg:w-full');
-                firstColumn.classList.add('lg:w-8/12');
-                RowDetails.classList.add('lg:flex');
-
-
-                const branchName = row.getAttribute('data-branch-name');
-                const centerName = row.getAttribute('data-center-name');
-                const manager = row.getAttribute('data-manager');
-                const todayIncome = document.getElementById('receivedSlideBar').textContent;
-                const activeLoans = document.getElementById('activeLoansCount').textContent;
+                 RowDetails.classList.remove('hidden');
+                 firstColumn.classList.remove('lg:w-full');
+                 firstColumn.classList.add('lg:w-8/12');
+                 RowDetails.classList.add('lg:flex');
 
 
-                document.getElementById('branchNameSlideBar').textContent = branchName;
-                document.getElementById('CnameSlideBar').textContent = centerName;
-                document.getElementById('CmanagerSlideBar').textContent = manager;
-                document.getElementById('todayIncomeSlideBar').textContent = todayIncome;
-                document.getElementById('activeLoansSlideBar').textContent = activeLoans;
-                document.querySelectorAll('.view-details').forEach(button => {
+                 const branchName = row.getAttribute('data-branch-name');
+                 const centerName = row.getAttribute('data-center-name');
+                 const manager = row.getAttribute('data-manager');
+                 const todayIncome = document.getElementById('receivedSlideBar').textContent;
+                 const activeLoans = document.getElementById('activeLoansCount').textContent;
+
+
+                 document.getElementById('branchNameSlideBar').textContent = branchName;
+                 document.getElementById('CnameSlideBar').textContent = centerName;
+                 document.getElementById('CmanagerSlideBar').textContent = manager;
+                 document.getElementById('todayIncomeSlideBar').textContent = todayIncome;
+                 document.getElementById('activeLoansSlideBar').textContent = activeLoans;
+                 document.querySelectorAll('.view-details').forEach(button => {
 
 
 
-                    renderGroupList(groupsInformation);
+                     renderGroupList(groupsInformation);
 
-                });
+                 });
 
-            });
-        }); */
+             });
+         }); */
     </script>
 @endsection

@@ -2,7 +2,7 @@
 @php
     use Carbon\Carbon;
     $now = Carbon::now();
-     require_once resource_path('libs/first_letter_capitalization.php');
+    require_once resource_path('libs/first_letter_capitalization.php');
     require_once resource_path('libs/every_word_first_letter_capitalization.php');
 @endphp
 @section('contents')
@@ -113,7 +113,25 @@
                 <!--CARD SECTION-->
                 <div id="memberGrid" class="grid grid-cols-1 sm:grid-cols-1 lg:hidden gap-4 p-2">
                     <!-- Card for a center -->
-                    @foreach ($allActiveLoans as $loans)
+                    @php
+                        $underpaymentLoans = $allActiveLoans->filter(function ($loan) {
+                            $installments = collect($loan->installments ?? $loan->installment)->sortByDesc(
+                                'installment_number',
+                            );
+
+                            if ($installments->isEmpty()) {
+                                return false; // no installments, skip
+                            }
+
+                            $lastInstallment = $installments->first();
+                            $secondLastInstallment = $installments->skip(1)->first(); // may be null
+
+                            return $loan->status === 'UNCOMPLETED' &&
+                                ($lastInstallment->status === 'UNDERPAYED' ||
+                                    ($lastInstallment->status === 'UNPAYED' && $secondLastInstallment && $secondLastInstallment->status === 'UNDERPAYED'));
+                        });
+                    @endphp
+                    @foreach ($underpaymentLoans as $loans)
                         <div class="rounded-md shadow flex flex-col justify-between w-full border bg-gray-100 hover:bg-gray-300"
                             data-member="Dunura" data-center="balangoda" data-loan-balance="85955200"
                             data-pending-amount="2000">
@@ -123,6 +141,40 @@
                             </div>
                             <hr>
                             @php
+                                $loanTotal = $loans->loan_amount + $loans->interest;
+                                $totalPayed = $loans->installment->sum(function ($installment) {
+                                    return $installment->underpayment->sum('amount');
+                                });
+
+                                $installments = collect($loans->installment)->sortByDesc('installment_number');
+
+                                $lastInstallment = $installments->first();
+                                $secondLastInstallment = $installments->skip(1)->first();
+
+                                // assign the installment to use for underpayment calculation
+                                $targetInstallment = null;
+
+                                if ($lastInstallment && $lastInstallment->status === 'UNDERPAYED') {
+                                    $targetInstallment = $lastInstallment;
+                                } elseif (
+                                    $lastInstallment->status === 'UNPAYED' &&
+                                    $secondLastInstallment &&
+                                    $secondLastInstallment->status === 'UNDERPAYED'
+                                ) {
+                                    $targetInstallment = $secondLastInstallment;
+                                }
+
+                                // fallback if no installment meets the condition
+                                if ($targetInstallment) {
+                                    $underpayment =
+                                        $targetInstallment->installment_number * $loans->installment_price -
+                                        $totalPayed;
+                                } else {
+                                    $underpayment = 0; // or handle as needed
+                                }
+                            @endphp
+                            {{-- @php
+
                                 $loanTotal = $loans->loan_amount + $loans->interest;
                                 $noPaidAmount = 0;
                                 $paidAmount = 0;
@@ -159,7 +211,7 @@
                                         }
                                     }
                                 }
-                            @endphp
+                            @endphp --}}
                             <div
                                 class="h-max py-2 px-4 flex flex-col justify-between space-y-1 bg-gray-200 hover:bg-gray-300">
                                 <div class="grid grid-cols-2 w-full">
@@ -170,13 +222,13 @@
                                     </div>
                                     <div class="text-xs flex items-center space-x-1">
                                         <p class="">Loan Balance :</p>
-                                        <p class="text-gray-700">Rs. {{ number_format($loanTotal - $paidAmount, 2) }}</p>
+                                        <p class="text-gray-700">Rs. {{ number_format($loanTotal - $totalPayed, 2) }}</p>
                                     </div>
                                 </div>
                                 <div class="grid grid-cols-2 w-full">
                                     <div class="text-xs flex items-center space-x-1">
                                         <p class="">Pending Amount :</p>
-                                        <p class="text-gray-700">Rs. {{ number_format($pendingAmount, 2) }}</p>
+                                        <p class="text-gray-700">Rs. {{ number_format($underpayment, 2) }}</p>
                                     </div>
                                 </div>
                             </div>
@@ -195,14 +247,15 @@
                                         <th class="pl-4 py-2 text-left">#</th>
                                         <th class="py-2 text-left">Name</th>
                                         <th class="py-2 text-left">Center</th>
-                                        <th class="py-2 text-center">Loan Balance</th>
-                                        <th class="py-2 text-center">Pending Amount</th>
-                                        <th class="py-2 text-center">Action</th>
+                                        {{--                                         <th class="py-2 text-center">Loan Balance</th>
+ --}} <th class="py-2 text-center">Under Payment Balance</th>
+                                        {{--                                         <th class="py-2 text-center">Action</th>
+ --}}
                                     </tr>
                                 </thead>
                                 <tbody id="tableBody" class="text-gray-800 text-xs font-light bg-white w-full">
-                                    @if ($allActiveLoans)
-                                        @foreach ($allActiveLoans as $loans)
+                                    @if ($underpaymentLoans)
+                                        @foreach ($underpaymentLoans as $loans)
                                             <tr class="border-b border-gray-200 hover:bg-sky-100 cursor-pointer rounded-lg view-details"
                                                 data-member-name="{{ capitalizeEachWord($loans->member->full_name) }}"
                                                 data-center-name=" {{ capitalizeEachWord($loans->member->group->center->center_name) }}"
@@ -219,7 +272,7 @@
                                                 <td class="py-2 text-left">
                                                     {{ capitalizeEachWord($loans->member->group->center->center_name) }}
                                                 </td>
-                                                @php
+                                                {{-- @php
                                                     $loanTotal = $loans->loan_amount + $loans->interest;
                                                     $pendingAmount = 0;
                                                     if ($loans->installment) {
@@ -241,13 +294,49 @@
                                                             }
                                                         }
                                                     }
+                                                @endphp --}}
+                                                @php
+                                                    $loanTotal = $loans->loan_amount + $loans->interest;
+                                                    $totalPayed = $loans->installment->sum(function ($installment) {
+                                                        return $installment->underpayment->sum('amount');
+                                                    });
+
+                                                    $installments = collect($loans->installment)->sortByDesc(
+                                                        'installment_number',
+                                                    );
+
+                                                    $lastInstallment = $installments->first();
+                                                    $secondLastInstallment = $installments->skip(1)->first();
+
+                                                    // assign the installment to use for underpayment calculation
+                                                    $targetInstallment = null;
+
+                                                    if ($lastInstallment && $lastInstallment->status === 'UNDERPAYED') {
+                                                        $targetInstallment = $lastInstallment;
+                                                    } elseif (
+                                                        $lastInstallment->status === 'UNPAYED' &&
+                                                        $secondLastInstallment &&
+                                                        $secondLastInstallment->status === 'UNDERPAYED'
+                                                    ) {
+                                                        $targetInstallment = $secondLastInstallment;
+                                                    }
+
+                                                    // fallback if no installment meets the condition
+                                                    if ($targetInstallment) {
+                                                        $underpayment =
+                                                            $targetInstallment->installment_number *
+                                                                $loans->installment_price -
+                                                            $totalPayed;
+                                                    } else {
+                                                        $underpayment = 0; // or handle as needed
+                                                    }
                                                 @endphp
-                                                <td class="py-2 text-center">Rs.
-                                                    {{ number_format($loanTotal - $paidAmount, 2) }}</td>
+                                                {{-- <td class="py-2 text-center">Rs.
+                                                    {{ number_format($loanTotal - $totalPayed, 2) }}</td> --}}
                                                 <td class="py-2 text-center"><span
                                                         class="bg-yellow-400 p-1 px-4 rounded">Rs.
-                                                        {{ number_format($pendingAmount, 2) }}</span> </td>
-                                                <td class="py-2 text-center flex justify-center items-center gap-1">
+                                                        {{ number_format($underpayment, 2) }}</span> </td>
+                                               {{--  <td class="py-2 text-center flex justify-center items-center gap-1">
                                                     <a href="#" class="border rounded hover:bg-green-500">
                                                         <img src="{{ asset('assets/icons/Eye.svg') }}" alt="Eye"
                                                             class="h-3 w-3 m-1">
@@ -260,7 +349,7 @@
                                                         <img src="{{ asset('assets/icons/Money.svg') }}" alt="Money"
                                                             class="h-3 w-3 m-1">
                                                     </a>
-                                                </td>
+                                                </td> --}}
                                             </tr>
                                         @endforeach
                                     @endif
@@ -614,7 +703,7 @@
             document.getElementById('firstColumn').classList.add('lg:w-full');
         }
 
-        document.querySelectorAll('.view-details').forEach(button => {
+        /* document.querySelectorAll('.view-details').forEach(button => {
             button.addEventListener('click', (e) => {
                 e.preventDefault();
                 const row = button.closest('tr');
@@ -653,7 +742,7 @@
                 document.getElementById('DocumentChagersSlideBar').textContent = 'Rs. ' + parseFloat(
                     loanCount.document_charges).toFixed(2);
             });
-        });
+        }); */
 
         // Installment Card Toggle
         document.querySelectorAll('.toggle-details-btn').forEach(button => {
